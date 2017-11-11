@@ -1,0 +1,2 @@
+CREATE TABLE symbols (id INT NOT NULL AUTO_INCREMENT, symbol VARCHAR(20), t_symbol VARCHAR(20), PRIMARY KEY (id));
+INSERT INTO symbols (symbol, t_symbol) values ('BTCUSD', 'tBTCUSD'), ('ETHUSD','tETHUSD'), ('BCHUSD','tBCHUSD'), ('ETCUSD', 'tETCUSD'), ('LTCUSD', 'tLTCUSD'), ('XMRUSD','tXMRUSD'), ('XRPUSD','tXRPUSD'), ('ETHBTC','tETHBTC'), ('LTCBTC','tLTCBTC'), ('XRPBTC','tXRPBTC'), ('XMRBTC','tXMRBTC'), ('BCHBTC','tBCHBTC'), ('ETCBTC','tETCBTC');

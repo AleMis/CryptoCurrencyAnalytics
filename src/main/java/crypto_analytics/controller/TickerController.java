@@ -34,12 +34,12 @@ public class TickerController {
         Set<TickerDto> tickerDtoSet = new HashSet<>();
         Set<String> querySet = getQueriesSet();
 
-        for(String query : querySet) {
-            TickerDto tickerDto = restTemplate.getForObject(query, TickerDto.class);
-            tickerDtoSet.add(tickerDto);
-            System.out.println(tickerDto);
-            Thread.sleep(6000);
-        }
+//        for(String query : querySet) {
+//            TickerDto tickerDto = restTemplate.getForObject(query, TickerDto.class);
+//            tickerDtoSet.add(tickerDto);
+//            System.out.println(tickerDto);
+//            Thread.sleep(6000);
+//        }
         return tickerDtoSet;
     }
 

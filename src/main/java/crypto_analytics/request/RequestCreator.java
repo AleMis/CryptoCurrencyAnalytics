@@ -1,11 +1,12 @@
 package crypto_analytics.request;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.ArrayDeque;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,8 +14,10 @@ import java.util.stream.Collectors;
 @Component
 public class RequestCreator {
 
-    private static final String GET_CANDLE_REQUEST = "https://api.bitfinex.com/v2/candles/trade:";
+    //Main
+    private static final String MAIN_REQUEST = "https://api.bitfinex.com/v2/candles/trade:";
 
+    //TimeFrames
     private static final String TIME_FRAME_1M = "1m:";
     private static final String TIME_FRAME_5M = "5m:";
     private static final String TIME_FRAME_15M = "15m:";
@@ -27,63 +30,49 @@ public class RequestCreator {
     private static final String TIME_FRAME_7D = "7D:";
     private static final String TIME_FRAME_1MTH = "1M:";
 
-    private static final String SECTION_HIST = "/hist";
+    //Time Stamps
+    private static final String DAILY_TIMESTAMP_DIFFERENCE = "86400000";
 
-    private static final String BTCUSD = "tBTCUSD";
+    //Currency Pairs
+    private static final String BTC_USD = "tBTCUSD";
     private static final String BTCETH = "tBTCETH";
 
-    private static final String END_DATE = LocalDate.now().toString();
+    //Additional
+    private static final String SECTION_HIST = "/hist";
+    private static final String LIMIT = "?limit=120&";
+    private static final String START = "start=";
+    private static final String END = "&end=";
+
+    //final
+    private static final String FINAL_DATE_1D = "1510358400000"; // 11.11.2017
 
 
+    //BTCUSD
+    private static final String START_DATE_BTCUSD_1H = "1504216800000";
+    private static final String START_DATE_BTCUSD_1D = "1364853600000";
+    private static final String START_DATE_BTCUSD_7D = "1364853600000";
 
-    public ArrayDeque<String> returnQuery() {
-        List<String> queryList = getQueryListWithTimeFramesAndCurrencyPairs();
-        ArrayDeque<String> queryQueue = new ArrayDeque<>();
-        for(String string : queryList) {
-            queryQueue.offer(string + "" + SECTION_HIST);
-        }
+    private static final String GET_BTCUSD_1D = MAIN_REQUEST + "" + TIME_FRAME_1D + "" + BTC_USD + "" + SECTION_HIST;
 
-        return queryQueue;
-    }
 
-    private List<String> getQueryListWithTimeFramesAndCurrencyPairs() {
-        List<String> queryListWithTimeFramesAndCurrencyPair  = new ArrayList<>();
-        List<String> currencyPairList = getCurrencyPair();
-        List<String> queryListWithTimeFrames = getQueryListWithTimeFrames();
-        for(String currencyPair : currencyPairList) {
-            for(String query : queryListWithTimeFrames) {
-                queryListWithTimeFramesAndCurrencyPair.add(query + "" + currencyPair);
+    public List<String> getRequestForBTCUSDupdates() {
+        List<String> requestList = new ArrayList<>();
+        BigInteger finalDate = new BigInteger(FINAL_DATE_1D);
+        BigInteger timeStampDifference = new BigInteger(DAILY_TIMESTAMP_DIFFERENCE);
+        BigInteger startDate = new BigInteger(START_DATE_BTCUSD_1D);
+        BigInteger endDate = startDate.add(timeStampDifference);
+
+        while(endDate.compareTo(finalDate) == -1) {
+            String request = GET_BTCUSD_1D + "" + LIMIT + "" + START + "" + startDate.toString() + "" + "" + END + "" + endDate.toString();
+            requestList.add(request);
+            startDate = endDate;
+            endDate = startDate.add(timeStampDifference.multiply(BigInteger.valueOf(120)));
+            if(endDate.compareTo(finalDate) == 1 ) {
+                endDate = finalDate;
             }
         }
-        return queryListWithTimeFramesAndCurrencyPair;
+        return requestList;
     }
 
-    private List<String> getQueryListWithTimeFrames() {
-        List<String> timeFrameList = getTimeFrameList();
-        List<String> queryList = timeFrameList.stream().map(s -> GET_CANDLE_REQUEST + "" + s).collect(Collectors.toList());
-        return queryList;
-    }
 
-    private List<String> getTimeFrameList() {
-        List<String> timeFrameList = new ArrayList<>();
-//        timeFrameList.add(TIME_FRAME_1M);
-//        timeFrameList.add(TIME_FRAME_5M);
-//        timeFrameList.add(TIME_FRAME_15M);
-//        timeFrameList.add(TIME_FRAME_30M);
-//        timeFrameList.add(TIME_FRAME_1H);
-//        timeFrameList.add(TIME_FRAME_3H);
-//        timeFrameList.add(TIME_FRAME_6H);
-//        timeFrameList.add(TIME_FRAME_12H);
-        timeFrameList.add(TIME_FRAME_1D);
-//        timeFrameList.add(TIME_FRAME_7D);
-//        timeFrameList.add(TIME_FRAME_1MTH);
-        return  timeFrameList;
-    }
-
-    private List<String> getCurrencyPair() {
-        List<String> currencyPairList = new ArrayList<>();
-        currencyPairList.add(BTCUSD);
-//        currencyPairList.add(BTCETH);
-        return currencyPairList;
-    }
 }

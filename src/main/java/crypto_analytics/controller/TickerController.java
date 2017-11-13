@@ -44,7 +44,7 @@ public class TickerController {
     }
 
     private Set<String> getQueriesSet() {
-        Set<Symbol> symbolSet = service.getSymbols();
+        Set<Symbol> symbolSet = service.getSymbolList();
         Set<String> queriesSet = symbolSet.stream().map(symbol -> MAIN_GET_QUERY + "" + symbol.getSymbol()).collect(Collectors.toSet());
         return queriesSet;
     }

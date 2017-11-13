@@ -1,6 +1,5 @@
 package crypto_analytics.service;
 
-import crypto_analytics.controller.CandleController;
 import crypto_analytics.domain.candle.Candle;
 import crypto_analytics.domain.symbol.Symbol;
 import crypto_analytics.repository.CandleRepository;
@@ -29,7 +28,7 @@ public class DbService {
         return candleRepository.findAll();
     }
 
-    public Timestamp getLastDateForCurrency(String currencyPair, String timeFrame) {
+    public Long getLastDateForCurrency(String currencyPair, String timeFrame) {
         return candleRepository.getLastDateForCurrency(currencyPair, timeFrame);
     }
 

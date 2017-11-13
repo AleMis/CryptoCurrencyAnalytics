@@ -1,5 +1,9 @@
 package crypto_analytics.request;
 
+import crypto_analytics.domain.dbsearcher.DbSearcher;
+import crypto_analytics.service.DbService;
+import oracle.jrockit.jfr.StringConstantPool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +12,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -55,7 +61,10 @@ public class RequestCreator {
     private static final String GET_BTCUSD_1D = MAIN_REQUEST + "" + TIME_FRAME_1D + "" + BTC_USD + "" + SECTION_HIST;
 
 
-    public List<String> getRequestForBTCUSDupdates() {
+    @Autowired
+    private DbService service;
+
+    public List<String> getRequestForBTCUSdownloading() {
         List<String> requestList = new ArrayList<>();
         BigInteger finalDate = new BigInteger(FINAL_DATE_1D);
         BigInteger timeStampDifference = new BigInteger(DAILY_TIMESTAMP_DIFFERENCE);
@@ -74,5 +83,56 @@ public class RequestCreator {
         return requestList;
     }
 
+
+
+
+    public List<String> getHourlyRequestsList() {
+        List<String> requestList = new ArrayList<>();
+
+
+        return requestList;
+    }
+
+    public List<String> getDailyRequestsList() {
+        List<String> requestList = new ArrayList<>();
+        List<DbSearcher> lastDailyTimestampList = getLastDailyTimestampList();
+        Long dailyTimestamp = returnDailyTimeStamp();
+        String request = null;
+        for(DbSearcher searcher : lastDailyTimestampList) {
+           request = MAIN_REQUEST + "" + TIME_FRAME_1D + "" + searcher.getCurrencyPair() + SECTION_HIST + LIMIT + START + searcher.getTimestamp() + END + dailyTimestamp;
+           requestList.add(request);
+        }
+        return requestList;
+    }
+
+    private List<DbSearcher> getLastDailyTimestampList() {
+        List<DbSearcher> searcherList = new ArrayList<>();
+        for (String currencyPair : getCurrencyList()) {
+            Long lastTimestamp = service.getLastDateForCurrency(currencyPair, TIME_FRAME_1D);
+            searcherList.add(new DbSearcher(lastTimestamp, currencyPair, TIME_FRAME_1D));
+        }
+        return searcherList;
+    }
+
+    private Long returnDailyTimeStamp() {
+        LocalDate localDate = LocalDate.now();
+        LocalDateTime localDateTime = LocalDateTime.of(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth(),0,0,0,0);
+        System.out.println(localDate);
+        Timestamp timestamp = Timestamp.valueOf(localDateTime);
+        Long timestampLong = timestamp.getTime();
+        return timestampLong;
+    }
+
+    private Long returnHourlyTimeStamp() {
+
+        Long timestampLong = null;
+        return timestampLong;
+    }
+
+    private List<String> getCurrencyList() {
+        List<String> list = new ArrayList<>();
+        list.add(BTC_USD);
+        return list;
+    }
 
 }

@@ -18,6 +18,6 @@ public interface CandleRepository extends CrudRepository<Candle, Long>{
     List<Candle> findAll();
 
     @Query(nativeQuery = true)
-    Timestamp getLastDateForCurrency(@Param("CURRENCYPAIR")String currencyPair, @Param("TIMEFRAME") String timeFrame);
+    Long getLastDateForCurrency(@Param("CURRENCYPAIR")String currencyPair, @Param("TIMEFRAME") String timeFrame);
 
 }

@@ -3,17 +3,11 @@ package crypto_analytics.mapper;
 import crypto_analytics.domain.candle.Candle;
 import crypto_analytics.domain.candle.CandleDto;
 import org.springframework.stereotype.Component;
-
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class CandleMapper {
@@ -21,7 +15,6 @@ public class CandleMapper {
     public List<CandleDto> mapToCandletDtoArrays(List<Object[][]> twoDimObjectsList) {
         List<CandleDto> candleDtoList = new ArrayList<>();
         for(Object[][] object : twoDimObjectsList) {
-            CandleDto[] candleArray = new CandleDto[object.length];
             Long timeStamp = null;
             Double open = null;
             Double close = null;

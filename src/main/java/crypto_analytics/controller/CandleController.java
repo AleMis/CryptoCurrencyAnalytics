@@ -5,11 +5,9 @@ import crypto_analytics.domain.candle.CandleDto;
 import crypto_analytics.mapper.CandleMapper;
 import crypto_analytics.request.RequestCreator;
 import crypto_analytics.service.DbService;
-import org.hibernate.annotations.NaturalId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -40,14 +38,16 @@ public class CandleController {
         return builder.build();
     }
 
+
+
     @Bean
     private List<Candle> downloadBtcUsdCandles(RestTemplate restTemplate) throws InterruptedException {
-        requestCreator.getRequestForBTCUSDupdates().stream().forEach(System.out::println);
-        List<Object[][]> objects = modelController.downloadedData(restTemplate, requestCreator.getRequestForBTCUSDupdates());
+        requestCreator.getRequestForBTCUSdownloading().stream().forEach(System.out::println);
+        List<Object[][]> objects = modelController.downloadedData(restTemplate, requestCreator.getRequestForBTCUSdownloading());
 
         List<CandleDto> candlesDtoList = candleMapper.mapToCandletDtoArrays(objects);
-        String currencyPair = requestCreator.getRequestForBTCUSDupdates().get(1).substring(45,52);
-        String timeFrame = requestCreator.getRequestForBTCUSDupdates().get(1).substring(42,44);
+        String currencyPair = requestCreator.getRequestForBTCUSdownloading().get(1).substring(45,52);
+        String timeFrame = requestCreator.getRequestForBTCUSdownloading().get(1).substring(42,44);
         List<Candle> candlesList = new ArrayList<>();
         for(CandleDto candleDto : candlesDtoList) {
             Candle candleToSave = candleMapper.mapToCandle(candleDto, currencyPair, timeFrame);

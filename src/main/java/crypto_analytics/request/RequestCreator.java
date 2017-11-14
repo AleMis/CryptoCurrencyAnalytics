@@ -71,12 +71,12 @@ public class RequestCreator {
         BigInteger startDate = new BigInteger(START_DATE_BTCUSD_1D);
         BigInteger endDate = startDate.add(timeStampDifference);
 
-        while(endDate.compareTo(finalDate) == -1) {
+        while (endDate.compareTo(finalDate) == -1) {
             String request = GET_BTCUSD_1D + "" + LIMIT + "" + START + "" + startDate.toString() + "" + "" + END + "" + endDate.toString();
             requestList.add(request);
             startDate = endDate;
             endDate = startDate.add(timeStampDifference.multiply(BigInteger.valueOf(120)));
-            if(endDate.compareTo(finalDate) == 1 ) {
+            if (endDate.compareTo(finalDate) == 1) {
                 endDate = finalDate;
             }
         }
@@ -84,49 +84,53 @@ public class RequestCreator {
     }
 
 
-
-
     public List<String> getHourlyRequestsList() {
         List<String> requestList = new ArrayList<>();
-
-
+        List<DbSearcher> lastHourlyTimestampList = getLastDateFromDatabase(TIME_FRAME_1H);
+        Long dailyTimestamp = convertLocalDatetTimeToLong(returnCurrentTimestamp(TIME_FRAME_1H));
+        String request = null;
+        for (DbSearcher searcher : lastHourlyTimestampList) {
+            request = MAIN_REQUEST + "" + TIME_FRAME_1H + "" + searcher.getCurrencyPair() + SECTION_HIST + LIMIT + START + searcher.getTimestamp() + END + dailyTimestamp;
+            requestList.add(request);
+        }
         return requestList;
     }
 
     public List<String> getDailyRequestsList() {
         List<String> requestList = new ArrayList<>();
-        List<DbSearcher> lastDailyTimestampList = getLastDailyTimestampList();
-        Long dailyTimestamp = returnDailyTimeStamp();
+        List<DbSearcher> lastDailyTimestampList = getLastDateFromDatabase(TIME_FRAME_1D);
+        Long dailyTimestamp = convertLocalDatetTimeToLong(returnCurrentTimestamp(TIME_FRAME_1D));
         String request = null;
-        for(DbSearcher searcher : lastDailyTimestampList) {
-           request = MAIN_REQUEST + "" + TIME_FRAME_1D + "" + searcher.getCurrencyPair() + SECTION_HIST + LIMIT + START + searcher.getTimestamp() + END + dailyTimestamp;
-           requestList.add(request);
+        for (DbSearcher searcher : lastDailyTimestampList) {
+            request = MAIN_REQUEST + "" + TIME_FRAME_1D + "" + searcher.getCurrencyPair() + SECTION_HIST + LIMIT + START + searcher.getTimestamp() + END + dailyTimestamp;
+            requestList.add(request);
         }
         return requestList;
     }
 
-    private List<DbSearcher> getLastDailyTimestampList() {
+
+    private List<DbSearcher> getLastDateFromDatabase(String timeframe) {
         List<DbSearcher> searcherList = new ArrayList<>();
         for (String currencyPair : getCurrencyList()) {
-            Long lastTimestamp = service.getLastDateForCurrency(currencyPair, TIME_FRAME_1D);
-            searcherList.add(new DbSearcher(lastTimestamp, currencyPair, TIME_FRAME_1D));
+            Long lastTimestamp = service.getLastDateForCurrency(currencyPair, timeframe);
+            searcherList.add(new DbSearcher(lastTimestamp, currencyPair, timeframe));
         }
         return searcherList;
     }
 
-    private Long returnDailyTimeStamp() {
-        LocalDate localDate = LocalDate.now();
-        LocalDateTime localDateTime = LocalDateTime.of(localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth(),0,0,0,0);
-        System.out.println(localDate);
-        Timestamp timestamp = Timestamp.valueOf(localDateTime);
-        Long timestampLong = timestamp.getTime();
-        return timestampLong;
-    }
 
-    private Long returnHourlyTimeStamp() {
-
-        Long timestampLong = null;
-        return timestampLong;
+    private LocalDateTime returnCurrentTimestamp(String timeframe) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime time = null;
+        switch (timeframe) {
+            case TIME_FRAME_1H:
+                time = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonthValue(), currentDateTime.getDayOfMonth(), currentDateTime.getHour(), 0, 0, 0);
+                break;
+            case TIME_FRAME_1D:
+                time = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonthValue(), currentDateTime.getDayOfMonth(), 0, 0, 0, 0);
+                break;
+        }
+        return time;
     }
 
     private List<String> getCurrencyList() {
@@ -135,4 +139,9 @@ public class RequestCreator {
         return list;
     }
 
+    private Long convertLocalDatetTimeToLong(LocalDateTime localDateTime) {
+        Timestamp timestamp = Timestamp.valueOf(localDateTime);
+        Long timestampLong = timestamp.getTime();
+        return timestampLong;
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 public interface CandleRepository extends CrudRepository<Candle, Long>{
 
@@ -18,6 +19,10 @@ public interface CandleRepository extends CrudRepository<Candle, Long>{
     List<Candle> findAll();
 
     @Query(nativeQuery = true)
-    Long getLastDateForCurrency(@Param("CURRENCYPAIR")String currencyPair, @Param("TIMEFRAME") String timeFrame);
+    Optional<Long> getLastDateForCurrency(@Param("CURRENCY_PAIR")String currencyPair, @Param("TIME_FRAME") String timeFrame);
+
+    @Query(nativeQuery = true)
+    Long checkFirstDate(@Param("CURRENCY_PAIR") String currencyPair, @Param("TIME_FRAME") String timeFrame, @Param("TIME_STAMP") Long timeStamp);
+
 
 }

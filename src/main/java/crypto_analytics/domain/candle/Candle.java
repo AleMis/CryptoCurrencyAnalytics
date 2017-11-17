@@ -4,25 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 
 
 @NamedNativeQueries({
         @NamedNativeQuery(
             name = "Candle.getLastDateForCurrency",
-            query =  "SELECT MAX(time_stamp) FROM candles WHERE currency_pair = :CURRENCYPAIR AND time_frame = :TIMEFRAME"
-        )})
+            query =  "SELECT MAX(time_stamp) FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME"
+        ),
+        @NamedNativeQuery(
+            name = "Candle.checkFirstDate",
+            query = "SELECT time_stamp, currency_pair, time_frame FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME AND time_stamp = :TIME_STAMP"
+        )
+})
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name="candles")
+@Entity
+@Table(name="candles")
 public class Candle {
 
     @Id

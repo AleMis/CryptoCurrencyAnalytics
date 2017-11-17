@@ -11,18 +11,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-
 import java.util.ArrayList;
 import java.util.List;
+
 
 @RestController
 public class CandleController {
 
     @Autowired
     private ModelController modelController;
-
-    @Autowired
-    private RequestCreator requestCreator;
 
     @Autowired
     private CandleMapper candleMapper;
@@ -33,27 +30,31 @@ public class CandleController {
     @Autowired
     private DbService service;
 
+    @Autowired
+    private RequestCreator requestCreator2;
+
     @Bean
     private RestTemplate template() {
         return builder.build();
     }
 
-
-
     @Bean
-    private List<Candle> downloadBtcUsdCandles(RestTemplate restTemplate) throws InterruptedException {
-        requestCreator.getRequestForBTCUSdownloading().stream().forEach(System.out::println);
-        List<Object[][]> objects = modelController.downloadedData(restTemplate, requestCreator.getRequestForBTCUSdownloading());
-
+    private List<Candle> downalodDailyCandles(RestTemplate restTemplate) throws InterruptedException {
+        List<Object[][]> objects = modelController.downloadedData(restTemplate, requestCreator2.getDailyRequestsList());
         List<CandleDto> candlesDtoList = candleMapper.mapToCandletDtoArrays(objects);
-        String currencyPair = requestCreator.getRequestForBTCUSdownloading().get(1).substring(45,52);
-        String timeFrame = requestCreator.getRequestForBTCUSdownloading().get(1).substring(42,44);
-        List<Candle> candlesList = new ArrayList<>();
+        String currencyPair = requestCreator2.getDailyRequestsList().getUpdateList().get(0).substring(45,52);
+        String timeFrame = "1D";
+        return returnCandleList(candlesDtoList, currencyPair, timeFrame);
+    }
+
+
+    private List<Candle> returnCandleList(List<CandleDto> candlesDtoList, String currencyPair, String timeFrame) {
+        List<Candle> candleList = new ArrayList<>();
         for(CandleDto candleDto : candlesDtoList) {
             Candle candleToSave = candleMapper.mapToCandle(candleDto, currencyPair, timeFrame);
             service.saveCandle(candleToSave);
-            candlesList.add(candleMapper.mapToCandle(candleDto,currencyPair,timeFrame));
+            candleList.add(candleMapper.mapToCandle(candleDto, currencyPair, timeFrame));
         }
-        return candlesList;
+        return candleList;
     }
 }

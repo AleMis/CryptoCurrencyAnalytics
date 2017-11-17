@@ -1,6 +1,6 @@
 package crypto_analytics.controller;
 
-import crypto_analytics.domain.candle.CandleDto;
+import crypto_analytics.domain.dbsearcher.DbUpdaterList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -11,16 +11,10 @@ import java.util.List;
 @Component
 public class ModelController {
 
-    public List<Object[][]> downloadedData(RestTemplate restTemplate, List<String> requestList) throws InterruptedException {
-        String[][] requestTwoDArray = null;
+    public List<Object[][]> downloadedData(RestTemplate restTemplate, DbUpdaterList dbUpdaterList) throws InterruptedException {
         List<Object[][]> requestTwoDArrayList = new ArrayList<>();
-        for(String request : requestList) {
-            ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(request, String[][].class);
-            requestTwoDArray = responseEntity.getBody();
-            pring(requestTwoDArray);
-            requestTwoDArrayList.add(requestTwoDArray);
-            Thread.sleep(6000);
-        }
+        requestTwoDArrayList.addAll(returnTwoArrayObjectList(restTemplate, dbUpdaterList.getDownloadList()));
+        requestTwoDArrayList.addAll(returnTwoArrayObjectList(restTemplate, dbUpdaterList.getUpdateList()));
         return requestTwoDArrayList;
     }
 
@@ -30,5 +24,18 @@ public class ModelController {
                 System.out.println(objects[i][j]);
             }
         }
+    }
+
+    private List<Object[][]> returnTwoArrayObjectList(RestTemplate restTemplate, List<String> list) throws InterruptedException {
+        String[][] requestTwoDArray = null;
+        List<Object[][]> requestTwoDArrayList = new ArrayList<>();
+        for(String request : list) {
+            ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(request, String[][].class);
+            requestTwoDArray = responseEntity.getBody();
+            pring(requestTwoDArray);
+            requestTwoDArrayList.add(requestTwoDArray);
+            Thread.sleep(6000);
+        }
+        return requestTwoDArrayList;
     }
 }

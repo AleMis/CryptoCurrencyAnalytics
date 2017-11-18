@@ -1,6 +1,5 @@
 package crypto_analytics.request;
 
-import crypto_analytics.domain.dbupdater.DbUpdaterContainer;
 import crypto_analytics.domain.dbupdater.DbUpdater;
 import crypto_analytics.service.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,9 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -44,65 +45,59 @@ public class RequestCreator {
     @Autowired
     private DbService service;
 
-    private List<String> finalDownloadRequestList= new ArrayList<>();
-    private List<String> finalUpdateRequestList = new ArrayList<>();
-
-    private DbUpdaterContainer dbUpdaterContainer = new DbUpdaterContainer();
-
-    public DbUpdaterContainer getHourlyRequestList() {
-        return getRequestsList(TIME_FRAME_1H);
+    public HashMap<String, List<String>> getDailyRequestsListForDownload() {
+        return getRequestsListForDownload(TIME_FRAME_1D);
     }
 
-    public DbUpdaterContainer getDailyRequestsList() {
-        return getRequestsList(TIME_FRAME_1D);
+    public HashMap<String, String> getDailyRequestsListForUpdate(){
+        return getRequestsListForUpdate(TIME_FRAME_1D);
     }
 
-    public DbUpdaterContainer getRequestsList(String timeframe) {
-        finalDownloadRequestList.clear();
-        finalUpdateRequestList.clear();
-
+    public  HashMap<String, List<String>> getRequestsListForDownload(String timeframe) {
+        HashMap<String, List<String>> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         List<String> requestList = new ArrayList<>();
-        String requestForUpdate = null;
-
         for(DbUpdater dbUpdater : dbUpdaterList) {
             if(!dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeframe)) {
                 requestList = getRequestListForDownload(dbUpdater);
-                requestList.stream().forEach(System.out::println);
-                LocalDateTime localDateTime = returnCurrentTimestamp(timeframe);
-                Long timestamp = convertLocalDatetTimeToLong(localDateTime);
+                LocalDateTime localDateTime = convertTimestampToLocalDateTime(dbUpdater.getEndTimestampForFirstDownload());
+                dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
+                dbUpdater.setUpdateTime(localDateTime.toLocalTime().toString());
+                dbUpdater.setUpdateTimestamp(dbUpdater.getEndTimestampForFirstDownload());
                 dbUpdater.setIsDownload(true);
-                dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
-                String time = localDateTime.getHour() + ":" + localDateTime.getMinute();
-                dbUpdater.setUpdateTime(time);
-                dbUpdater.setUpdateTimestamp(timestamp);
                 service.saveDbUpdater(dbUpdater);
+                requestMap.put(dbUpdater.getCurrencyPair(), requestList);
             }
         }
-        finalDownloadRequestList.addAll(requestList);
-        dbUpdaterList = getUpdateList();
-
-        for(DbUpdater dbUpdater : dbUpdaterList)  {
-            if(dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeframe)) {
-                requestForUpdate = getRequestToUpdate(dbUpdater);
-                finalUpdateRequestList.add(requestForUpdate);
-                LocalDateTime localDateTime = returnCurrentTimestamp(timeframe);
-                Long timestamp = convertLocalDatetTimeToLong(localDateTime);
-                dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
-                String time = localDateTime.getHour() + ":" + localDateTime.getMinute();
-                dbUpdater.setUpdateTime(time);
-                dbUpdater.setUpdateTimestamp(timestamp);
-                service.saveDbUpdater(dbUpdater);
-            }
-        }
-        dbUpdaterContainer.setDownloadList(finalDownloadRequestList);
-        dbUpdaterContainer.setUpdateList(finalUpdateRequestList);
-        return dbUpdaterContainer;
+        return requestMap;
     }
+
+    public HashMap<String, String> getRequestsListForUpdate(String timeframe) {
+        HashMap<String, String> requestMap = new HashMap<>();
+        List<DbUpdater> dbUpdaterList = getUpdateList();
+        String request = null;
+        for(DbUpdater dbUpdater : dbUpdaterList)  {
+            Long tmp = convertLocalDateTimeToLong(returnCurrentLocalDateTime(dbUpdater.getTimeFrame()));
+            if(dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeframe) && !dbUpdater.getUpdateTimestamp().equals(tmp)) {
+                request = getRequestToUpdate(dbUpdater);
+                LocalDateTime localDateTime = returnCurrentLocalDateTime(timeframe);
+                Long timestamp = convertLocalDateTimeToLong(localDateTime);
+                dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
+                String time = localDateTime.getHour() + ":" + localDateTime.getMinute();
+                dbUpdater.setUpdateTime(time);
+                dbUpdater.setUpdateTimestamp(timestamp);
+                service.saveDbUpdater(dbUpdater);
+                requestMap.put(dbUpdater.getCurrencyPair(), request);
+            }
+        }
+        return requestMap;
+    }
+
+
 
     public String getRequestToUpdate(DbUpdater update) {
         BigInteger startTimestamp = BigInteger.valueOf(update.getUpdateTimestamp());
-        BigInteger endTimestamp = BigInteger.valueOf(convertLocalDatetTimeToLong(returnCurrentTimestamp(update.getTimeFrame())));
+        BigInteger endTimestamp = BigInteger.valueOf(convertLocalDateTimeToLong(returnCurrentLocalDateTime(update.getTimeFrame())));
         return MAIN_REQUEST + update.getTimeFrame() + ":" + update.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + endTimestamp + SORT;
     }
 
@@ -118,7 +113,6 @@ public class RequestCreator {
             requestList.add(request);
             startTimestamp = midTimestamp;
             midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(120)));
-
             if(midTimestamp.compareTo(finalTimestamp) == 1) {
                 midTimestamp = finalTimestamp;
             }
@@ -144,12 +138,17 @@ public class RequestCreator {
         return result;
     }
 
-    private Long convertLocalDatetTimeToLong(LocalDateTime localDateTime) {
+    private Long convertLocalDateTimeToLong(LocalDateTime localDateTime) {
         Timestamp timestamp = Timestamp.valueOf(localDateTime);
         return timestamp.getTime();
     }
 
-    private LocalDateTime returnCurrentTimestamp(String timeframe) {
+    private LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
+        Timestamp ts = new Timestamp(timestamp);
+        return LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
+    }
+
+    private LocalDateTime returnCurrentLocalDateTime(String timeframe) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime time = null;
         switch (timeframe) {

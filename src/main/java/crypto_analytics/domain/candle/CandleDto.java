@@ -11,6 +11,7 @@ import lombok.*;
 public class CandleDto {
 
     private Long timeStamp;
+    private String currencyPair;
     private Double open;
     private Double close;
     private Double high;

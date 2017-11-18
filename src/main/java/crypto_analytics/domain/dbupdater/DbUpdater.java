@@ -1,4 +1,4 @@
-package crypto_analytics.domain.dbsearcher;
+package crypto_analytics.domain.dbupdater;
 
 import lombok.*;
 

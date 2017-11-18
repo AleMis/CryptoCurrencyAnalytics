@@ -1,11 +1,10 @@
 package crypto_analytics.mapper;
 
 
-import crypto_analytics.domain.dbsearcher.DbUpdater;
-import crypto_analytics.domain.dbsearcher.DbUpdaterDto;
+import crypto_analytics.domain.dbupdater.DbUpdater;
+import crypto_analytics.domain.dbupdater.DbUpdaterDto;
 import org.springframework.stereotype.Component;
 
-import javax.rmi.CORBA.Tie;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

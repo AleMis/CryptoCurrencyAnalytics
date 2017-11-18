@@ -1,7 +1,7 @@
 package crypto_analytics.service;
 
 import crypto_analytics.domain.candle.Candle;
-import crypto_analytics.domain.dbsearcher.DbUpdater;
+import crypto_analytics.domain.dbupdater.DbUpdater;
 import crypto_analytics.domain.symbol.Symbol;
 import crypto_analytics.repository.CandleRepository;
 import crypto_analytics.repository.DbUpdaterRepository;

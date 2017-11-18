@@ -1,4 +1,4 @@
-package crypto_analytics.domain.dbsearcher;
+package crypto_analytics.domain.dbupdater;
 
 import lombok.*;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @ToString
 @Component
-public class DbUpdaterList {
+public class DbUpdaterContainer {
 
     private List<String> downloadList;
     private List<String> updateList;

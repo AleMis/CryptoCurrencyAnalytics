@@ -1,6 +1,6 @@
 package crypto_analytics.controller;
 
-import crypto_analytics.domain.dbsearcher.DbUpdaterList;
+import crypto_analytics.domain.dbupdater.DbUpdaterContainer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class ModelController {
 
-    public List<Object[][]> downloadedData(RestTemplate restTemplate, DbUpdaterList dbUpdaterList) throws InterruptedException {
+    public List<Object[][]> downloadedData(RestTemplate restTemplate, DbUpdaterContainer dbUpdaterList) throws InterruptedException {
         List<Object[][]> requestTwoDArrayList = new ArrayList<>();
         requestTwoDArrayList.addAll(returnTwoArrayObjectList(restTemplate, dbUpdaterList.getDownloadList()));
         requestTwoDArrayList.addAll(returnTwoArrayObjectList(restTemplate, dbUpdaterList.getUpdateList()));

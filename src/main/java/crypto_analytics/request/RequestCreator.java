@@ -33,10 +33,11 @@ public class RequestCreator {
 
     //Time Stamps
     private static final String DAILY_TIMESTAMP_DIFFERENCE = "86400000";
+    private static final String HOURLY_TIMESTAMP_DIFFERENCE = "3600000";
 
     //Additional
     private static final String SECTION_HIST = "/hist";
-    private static final String LIMIT = "?limit=120&";
+    private static final String LIMIT = "?limit=160&";
     private static final String START = "start=";
     private static final String END = "&end=";
     private static final String SORT = "&sort=1";
@@ -44,6 +45,14 @@ public class RequestCreator {
 
     @Autowired
     private DbService service;
+
+    public HashMap<String, List<String>> getHourlyRequestsListForDownload() {
+        return getRequestsListForDownload(TIME_FRAME_1H);
+    }
+
+    public HashMap<String, String> getHourlyRequestsListForUpadte() {
+        return getRequestsListForUpdate(TIME_FRAME_1H);
+    }
 
     public HashMap<String, List<String>> getDailyRequestsListForDownload() {
         return getRequestsListForDownload(TIME_FRAME_1D);
@@ -105,18 +114,22 @@ public class RequestCreator {
         BigInteger startTimestamp = BigInteger.valueOf(dbUpdater.getStartTimestampForFirstDownload());
         BigInteger finalTimestamp = BigInteger.valueOf(dbUpdater.getEndTimestampForFirstDownload());
         BigInteger timestampDifference = new BigInteger(getTimeStampDifference(dbUpdater.getTimeFrame()));
-        BigInteger midTimestamp = startTimestamp.add(timestampDifference);
+        BigInteger midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(150L)));
         List<String> requestList = new ArrayList<>();
-        while(midTimestamp.compareTo(finalTimestamp) == -1) {
-            String request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
+        String request = null;
+        while(midTimestamp.compareTo(finalTimestamp)  == -1) {
+            request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
             System.out.println(request);
             requestList.add(request);
             startTimestamp = midTimestamp;
-            midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(120)));
+            midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(150L)));
             if(midTimestamp.compareTo(finalTimestamp) == 1) {
                 midTimestamp = finalTimestamp;
             }
         }
+        request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
+        requestList.add(request);
+
         return requestList;
     }
 
@@ -132,7 +145,7 @@ public class RequestCreator {
                 result = DAILY_TIMESTAMP_DIFFERENCE;
                 break;
             case TIME_FRAME_1H:
-                //need to add hourly timestamp difference
+                result = HOURLY_TIMESTAMP_DIFFERENCE;
                 break;
         }
         return result;

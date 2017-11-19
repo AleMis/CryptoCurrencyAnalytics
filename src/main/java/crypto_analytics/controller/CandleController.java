@@ -52,11 +52,31 @@ public class CandleController {
     }
 
     @Bean
+    @Primary
+    private List<Candle> downloadHourlyCandles(RestTemplate restTemplate) throws InterruptedException {
+        HashMap<String, List<String>> requestMap = requestCreator.getHourlyRequestsListForDownload();
+        HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadedData(restTemplate,requestMap);
+        List<CandleDto> candlesDtoList = candleMapper.mapToCandletDtoToDownload(objectsRequestMap);
+        String timeFrame = "1h";
+        return returnCandleList(candlesDtoList, timeFrame);
+    }
+
+
+    @Bean
     private List<Candle> updateDailyCandles(RestTemplate restTemplate) throws InterruptedException {
         HashMap<String, String> requestsList = requestCreator.getDailyRequestsListForUpdate();
         HashMap<String, Object[][]> requestMap = modelController.updateData(restTemplate,requestsList);
         List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToUpdate(requestMap);
         String timeFrame = "1D";
+        return returnCandleList(candlesDtoList, timeFrame);
+    }
+
+    @Bean
+    private List<Candle> updateHourlyCandles(RestTemplate restTemplate) throws InterruptedException {
+        HashMap<String, String> requestsList = requestCreator.getHourlyRequestsListForUpadte();
+        HashMap<String, Object[][]> requestMap = modelController.updateData(restTemplate,requestsList);
+        List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToUpdate(requestMap);
+        String timeFrame = "1h";
         return returnCandleList(candlesDtoList, timeFrame);
     }
 

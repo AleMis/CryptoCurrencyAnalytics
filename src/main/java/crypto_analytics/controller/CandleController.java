@@ -46,7 +46,7 @@ public class CandleController {
     private List<Candle> downloadDailyCandles(RestTemplate restTemplate) throws InterruptedException {
         HashMap<String, List<String>> requestMap = requestCreator.getDailyRequestsListForDownload();
         HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadedData(restTemplate,requestMap);
-        List<CandleDto> candlesDtoList = candleMapper.mapToCandletDtoToDownload(objectsRequestMap);
+        List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToDownload(objectsRequestMap);
         String timeFrame = "1D";
         return returnCandleList(candlesDtoList, timeFrame);
     }
@@ -56,7 +56,7 @@ public class CandleController {
     private List<Candle> downloadHourlyCandles(RestTemplate restTemplate) throws InterruptedException {
         HashMap<String, List<String>> requestMap = requestCreator.getHourlyRequestsListForDownload();
         HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadedData(restTemplate,requestMap);
-        List<CandleDto> candlesDtoList = candleMapper.mapToCandletDtoToDownload(objectsRequestMap);
+        List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToDownload(objectsRequestMap);
         String timeFrame = "1h";
         return returnCandleList(candlesDtoList, timeFrame);
     }

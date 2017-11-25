@@ -2,19 +2,23 @@ package crypto_analytics.mapper;
 
 import crypto_analytics.domain.candle.Candle;
 import crypto_analytics.domain.candle.CandleDto;
+import crypto_analytics.domain.candle.CandleDtoCharts;
 import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class CandleMapper {
 
-    public List<CandleDto> mapToCandletDtoToDownload(HashMap<String, List<Object[][]>> twoDimObjectsMap) {
+    public List<CandleDto> mapToCandleDtoToDownload(HashMap<String, List<Object[][]>> twoDimObjectsMap) {
         List<CandleDto> candleDtoList = new ArrayList<>();
         for(Map.Entry<String, List<Object[][]>> map : twoDimObjectsMap.entrySet()) {
             for (Object[][] object : map.getValue()) {
@@ -105,7 +109,19 @@ public class CandleMapper {
                 timeFrame);
     }
 
-    public CandleDto mapToCandleDto(Candle candle) {
-        return new CandleDto(candle.getTimeStamp(),candle.getCurrencyPair() ,candle.getOpen(), candle.getClose(), candle.getHigh(), candle.getLow(), candle.getVolume());
+    public CandleDtoCharts[] mapToCandleDtoChartsList(List<Candle> list) {
+        CandleDtoCharts[] candleDtoChartsArray = list.stream().map(candle -> new CandleDtoCharts(
+                convertTimestampToLocalDateTime(candle.getTimeStamp()),
+                candle.getOpen(),
+                candle.getClose(),
+                candle.getHigh(),
+                candle.getLow(),
+                candle.getVolume())).collect(Collectors.toList()).toArray(new CandleDtoCharts[list.size()]);
+        return candleDtoChartsArray;
+    }
+
+    private LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
+        Timestamp ts = new Timestamp(timestamp);
+        return LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
     }
 }

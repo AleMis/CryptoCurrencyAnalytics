@@ -2,6 +2,7 @@ package crypto_analytics.repository;
 
 
 import crypto_analytics.domain.candle.Candle;
+import crypto_analytics.domain.candle.CandleDto;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -24,5 +25,7 @@ public interface CandleRepository extends CrudRepository<Candle, Long>{
     @Query(nativeQuery = true)
     Long checkFirstDate(@Param("CURRENCY_PAIR") String currencyPair, @Param("TIME_FRAME") String timeFrame, @Param("TIME_STAMP") Long timeStamp);
 
+    @Query(nativeQuery = true)
+    List<Candle> getCandlesByCurrencyPairAndTimeFrame(@Param("CURRENCY_PAIR") String currencyPair, @Param("TIME_FRAME") String timeFrame);
 
 }

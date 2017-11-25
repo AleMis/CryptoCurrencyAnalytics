@@ -52,15 +52,4 @@ public class ModelController {
         }
         return map;
     }
-
-
-
-    private void print(Object[][] objects) {
-        for(int i = 0; i<objects.length; i++) {
-            for(int j = 0; j<objects[i].length; j++) {
-                System.out.println(objects[i][j]);
-            }
-        }
-    }
-
 }

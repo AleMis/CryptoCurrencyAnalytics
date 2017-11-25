@@ -53,4 +53,7 @@ public class DbService {
         return dbUpdaterRepository.save(dbUpdater);
     }
 
+    public List<Candle> getCandlesByCurrencyPairAndTimeFrame(String currencyPair, String timeFrame) {
+        return candleRepository.getCandlesByCurrencyPairAndTimeFrame(currencyPair, timeFrame);
+    }
 }

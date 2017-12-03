@@ -8,9 +8,8 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class TickerController {
@@ -29,30 +28,30 @@ public class TickerController {
     }
 
     @Bean
-    private Set<TickerDto> getTickerSet(RestTemplate restTemplate) throws InterruptedException {
-        Set<TickerDto> tickerDtoSet = new HashSet<>();
-        Set<String> querySet = getQueriesSet();
+    private List<TickerDto> getTickerSet(RestTemplate restTemplate) throws InterruptedException {
+        List<TickerDto> tickerDtoList = new ArrayList<>();
+        List<String> requestsList = getRequestsList();
 
-//        for(String query : querySet) {
-//            TickerDto tickerDto = restTemplate.getForObject(query, TickerDto.class);
-//            tickerDtoSet.add(tickerDto);
-//            System.out.println(tickerDto);
-//            Thread.sleep(6000);
-//        }
-        return tickerDtoSet;
+        for(String query : requestsList) {
+            TickerDto tickerDto = restTemplate.getForObject(query, TickerDto.class);
+            tickerDtoList.add(tickerDto);
+            System.out.println(tickerDto);
+            Thread.sleep(6000);
+        }
+        return tickerDtoList;
     }
 
-    private Set<String> getQueriesSet() {
+    private List<String> getRequestsList() {
         List<DbUpdater> list = service.getDbUpdaterList();
         StringBuilder stringBuilder = new StringBuilder();
-        Set<String> requestsSet = new HashSet<>();
+        List<String> requestsList = new ArrayList<>();
         for(DbUpdater dbUpdater : list) {
             stringBuilder.delete(0, stringBuilder.length());
             stringBuilder.append(MAIN_GET_QUERY);
             stringBuilder.append(dbUpdater.getCurrencyPair());
-            requestsSet.add(stringBuilder.toString());
+            requestsList.add(stringBuilder.toString());
         }
-        return requestsSet;
+        return requestsList;
     }
 
 

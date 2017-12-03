@@ -1,9 +1,7 @@
 package crypto_analytics.domain.candle;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import javax.persistence.*;
 
 
@@ -28,6 +26,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name="candles")
 public class Candle {
 

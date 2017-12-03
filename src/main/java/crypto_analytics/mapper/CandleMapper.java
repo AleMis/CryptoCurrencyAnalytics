@@ -4,6 +4,8 @@ import crypto_analytics.domain.candle.Candle;
 import crypto_analytics.domain.candle.CandleDto;
 import crypto_analytics.domain.candle.CandleDtoCharts;
 import org.springframework.stereotype.Component;
+
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -120,8 +122,10 @@ public class CandleMapper {
         return candleDtoChartsArray;
     }
 
-    private LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
+    private String convertTimestampToLocalDateTime(Long timestamp) {
         Timestamp ts = new Timestamp(timestamp);
-        return LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
+        LocalDate localDate = LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth());
+        return localDate.toString();
     }
 }

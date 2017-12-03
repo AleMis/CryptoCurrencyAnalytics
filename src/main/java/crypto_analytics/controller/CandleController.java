@@ -8,7 +8,9 @@ import crypto_analytics.service.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-@RestController
+@Component
 public class CandleController {
 
     @Autowired

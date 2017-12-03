@@ -25,9 +25,7 @@ public class CandleRestController {
 
     @RequestMapping(method = RequestMethod.GET, value = "getCandles")
     public CandleDtoCharts[] getCandleList(@RequestParam String currencyPair, @RequestParam String timeFrame) {
+        System.out.println(currencyPair + " " + timeFrame);
         return candleMapper.mapToCandleDtoChartsList(service.getCandlesByCurrencyPairAndTimeFrame(currencyPair, timeFrame));
     }
-
-
-
 }

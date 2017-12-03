@@ -107,7 +107,19 @@ public class RequestCreator {
     public String getRequestToUpdate(DbUpdater update) {
         BigInteger startTimestamp = BigInteger.valueOf(update.getUpdateTimestamp());
         BigInteger endTimestamp = BigInteger.valueOf(convertLocalDateTimeToLong(returnCurrentLocalDateTime(update.getTimeFrame())));
-        return MAIN_REQUEST + update.getTimeFrame() + ":" + update.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + endTimestamp + SORT;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(MAIN_REQUEST);
+        stringBuilder.append(update.getTimeFrame());
+        stringBuilder.append(":");
+        stringBuilder.append(update.getCurrencyPair());
+        stringBuilder.append(SECTION_HIST);
+        stringBuilder.append(LIMIT);
+        stringBuilder.append(START);
+        stringBuilder.append(startTimestamp);
+        stringBuilder.append(END);
+        stringBuilder.append(endTimestamp);
+        stringBuilder.append(SORT);
+        return stringBuilder.toString();
     }
 
     public List<String> getRequestListForDownload(DbUpdater dbUpdater) {
@@ -116,20 +128,28 @@ public class RequestCreator {
         BigInteger timestampDifference = new BigInteger(getTimeStampDifference(dbUpdater.getTimeFrame()));
         BigInteger midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(150L)));
         List<String> requestList = new ArrayList<>();
-        String request = null;
+        StringBuilder stringBuilder = new StringBuilder();
         while(midTimestamp.compareTo(finalTimestamp)  == -1) {
-            request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
-            System.out.println(request);
-            requestList.add(request);
+            stringBuilder.append(MAIN_REQUEST);
+            stringBuilder.append(dbUpdater.getTimeFrame());
+            stringBuilder.append(":");
+            stringBuilder.append(dbUpdater.getCurrencyPair());
+            stringBuilder.append(SECTION_HIST);
+            stringBuilder.append(LIMIT);
+            stringBuilder.append(START);
+            stringBuilder.append(startTimestamp);
+            stringBuilder.append(END);
+            stringBuilder.append(midTimestamp);
+            stringBuilder.append(SORT);
+            requestList.add(stringBuilder.toString());
             startTimestamp = midTimestamp;
             midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(150L)));
             if(midTimestamp.compareTo(finalTimestamp) == 1) {
                 midTimestamp = finalTimestamp;
             }
         }
-        request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
+        String request = MAIN_REQUEST + dbUpdater.getTimeFrame() + ":" + dbUpdater.getCurrencyPair() + SECTION_HIST + LIMIT + START + startTimestamp + END + midTimestamp + SORT;
         requestList.add(request);
-
         return requestList;
     }
 
@@ -161,10 +181,10 @@ public class RequestCreator {
         return LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
     }
 
-    private LocalDateTime returnCurrentLocalDateTime(String timeframe) {
+    private LocalDateTime returnCurrentLocalDateTime(String timeFrame) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime time = null;
-        switch (timeframe) {
+        switch (timeFrame) {
             case TIME_FRAME_1H:
                 time = LocalDateTime.of(currentDateTime.getYear(), currentDateTime.getMonthValue(), currentDateTime.getDayOfMonth(), currentDateTime.getHour(), 0, 0, 0);
                 break;

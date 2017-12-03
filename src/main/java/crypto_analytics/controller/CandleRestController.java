@@ -1,7 +1,6 @@
 package crypto_analytics.controller;
 
 
-import crypto_analytics.domain.candle.CandleDto;
 import crypto_analytics.domain.candle.CandleDtoCharts;
 import crypto_analytics.mapper.CandleMapper;
 import crypto_analytics.service.DbService;

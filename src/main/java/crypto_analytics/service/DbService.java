@@ -29,20 +29,8 @@ public class DbService {
         return symbolRepository.findAll();
     }
 
-    public List<Candle> getCandleList() {
-        return candleRepository.findAll();
-    }
-
-    public Optional<Long> getLastDateForCurrency(String currencyPair, String timeFrame) {
-        return candleRepository.getLastDateForCurrency(currencyPair, timeFrame);
-    }
-
     public Candle saveCandle(final Candle candle) {
         return candleRepository.save(candle);
-    }
-
-    public Long checkFirstDate(String currencyPair, String timeFrame, Long timeStamp) {
-        return candleRepository.checkFirstDate(currencyPair, timeFrame, timeStamp);
     }
 
     public List<DbUpdater> getDbUpdaterList() {

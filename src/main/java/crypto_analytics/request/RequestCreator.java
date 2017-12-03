@@ -130,6 +130,7 @@ public class RequestCreator {
         List<String> requestList = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
         while(midTimestamp.compareTo(finalTimestamp)  == -1) {
+            stringBuilder.delete(0, stringBuilder.length());
             stringBuilder.append(MAIN_REQUEST);
             stringBuilder.append(dbUpdater.getTimeFrame());
             stringBuilder.append(":");
@@ -144,6 +145,7 @@ public class RequestCreator {
             requestList.add(stringBuilder.toString());
             startTimestamp = midTimestamp;
             midTimestamp = startTimestamp.add(timestampDifference.multiply(BigInteger.valueOf(150L)));
+            System.out.println(stringBuilder.toString());
             if(midTimestamp.compareTo(finalTimestamp) == 1) {
                 midTimestamp = finalTimestamp;
             }

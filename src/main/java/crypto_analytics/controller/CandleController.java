@@ -8,10 +8,8 @@ import crypto_analytics.service.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import java.util.List;
 public class CandleController {
 
     @Autowired
-    private ModelController modelController;
+    private CandleDataController modelController;
 
     @Autowired
     private CandleMapper candleMapper;
@@ -47,7 +45,7 @@ public class CandleController {
     @Primary
     private List<Candle> downloadDailyCandles(RestTemplate restTemplate) throws InterruptedException {
         HashMap<String, List<String>> requestMap = requestCreator.getDailyRequestsListForDownload();
-        HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadedData(restTemplate,requestMap);
+        HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadData(restTemplate,requestMap);
         List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToDownload(objectsRequestMap);
         String timeFrame = "1D";
         return returnCandleList(candlesDtoList, timeFrame);
@@ -57,7 +55,7 @@ public class CandleController {
     @Primary
     private List<Candle> downloadHourlyCandles(RestTemplate restTemplate) throws InterruptedException {
         HashMap<String, List<String>> requestMap = requestCreator.getHourlyRequestsListForDownload();
-        HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadedData(restTemplate,requestMap);
+        HashMap<String, List<Object[][]>> objectsRequestMap = modelController.downloadData(restTemplate,requestMap);
         List<CandleDto> candlesDtoList = candleMapper.mapToCandleDtoToDownload(objectsRequestMap);
         String timeFrame = "1h";
         return returnCandleList(candlesDtoList, timeFrame);

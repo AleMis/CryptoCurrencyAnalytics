@@ -10,23 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-public class ModelController {
+@Component
+public class CandleDataController {
 
-    public HashMap<String, List<Object[][]>> downloadedData(RestTemplate restTemplate, HashMap<String, List<String>> requestMap) throws InterruptedException {
-        HashMap<String, List<Object[][]>> requestTwoDArrayList = new HashMap<>();
-        requestTwoDArrayList.putAll(returnObjectMapToDownload(restTemplate, requestMap));
-        return requestTwoDArrayList;
-    }
-
-    public HashMap<String, Object[][]> updateData(RestTemplate restTemplate, HashMap<String, String> requestMap) throws InterruptedException {
-        HashMap<String, Object[][]> requestTwoDArrayList = new HashMap<>();
-        requestTwoDArrayList.putAll(returnObjectMapToUpdate(restTemplate, requestMap));
-        return requestTwoDArrayList;
-    }
-
-
-    private HashMap<String, List<Object[][]>> returnObjectMapToDownload(RestTemplate restTemplate, HashMap<String, List<String>> requestMap) throws InterruptedException {
+    public HashMap<String, List<Object[][]>> downloadData(RestTemplate restTemplate, HashMap<String, List<String>> requestMap) throws InterruptedException {
         String[][] requestTwoDArray = null;
         List<Object[][]> requestTwoDList = new ArrayList<>();
         HashMap<String, List<Object[][]>> requestTwoDArrayMap = new HashMap<>();
@@ -42,7 +29,7 @@ public class ModelController {
         return requestTwoDArrayMap;
     }
 
-    private HashMap<String, Object[][]> returnObjectMapToUpdate(RestTemplate restTemplate, HashMap<String, String> requestMap) throws InterruptedException {
+    public HashMap<String, Object[][]> updateData(RestTemplate restTemplate, HashMap<String, String> requestMap) throws InterruptedException {
         String[][] requestTwoDArray = null;
         HashMap<String, Object[][]> map = new HashMap<>();
         for(Map.Entry<String, String> requests : requestMap.entrySet()) {

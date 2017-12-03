@@ -1,19 +1,18 @@
 package crypto_analytics.controller;
 
-import crypto_analytics.domain.symbol.Symbol;
+import crypto_analytics.domain.dbupdater.DbUpdater;
 import crypto_analytics.domain.ticker.TickerDto;
 import crypto_analytics.service.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@RestController
+@Component
 public class TickerController {
 
     private static final String MAIN_GET_QUERY = "https://api.bitfinex.com/v1/pubticker/";
@@ -44,9 +43,16 @@ public class TickerController {
     }
 
     private Set<String> getQueriesSet() {
-        Set<Symbol> symbolSet = service.getSymbolList();
-        Set<String> queriesSet = symbolSet.stream().map(symbol -> MAIN_GET_QUERY + "" + symbol.getSymbol()).collect(Collectors.toSet());
-        return queriesSet;
+        List<DbUpdater> list = service.getDbUpdaterList();
+        StringBuilder stringBuilder = new StringBuilder();
+        Set<String> requestsSet = new HashSet<>();
+        for(DbUpdater dbUpdater : list) {
+            stringBuilder.delete(0, stringBuilder.length());
+            stringBuilder.append(MAIN_GET_QUERY);
+            stringBuilder.append(dbUpdater.getCurrencyPair());
+            requestsSet.add(stringBuilder.toString());
+        }
+        return requestsSet;
     }
 
 

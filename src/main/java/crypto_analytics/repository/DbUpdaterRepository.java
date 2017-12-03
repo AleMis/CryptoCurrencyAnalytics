@@ -13,4 +13,5 @@ public interface DbUpdaterRepository extends CrudRepository<DbUpdater, Long> {
     @Override
     DbUpdater save(DbUpdater dbUpdater);
 
+
 }

@@ -113,19 +113,12 @@ public class CandleMapper {
 
     public CandleDtoCharts[] mapToCandleDtoChartsList(List<Candle> list) {
         CandleDtoCharts[] candleDtoChartsArray = list.stream().map(candle -> new CandleDtoCharts(
-                convertTimestampToLocalDateTime(candle.getTimeStamp()),
+                candle.getTimeStamp(),
                 candle.getOpen(),
                 candle.getClose(),
                 candle.getHigh(),
                 candle.getLow(),
                 candle.getVolume())).collect(Collectors.toList()).toArray(new CandleDtoCharts[list.size()]);
         return candleDtoChartsArray;
-    }
-
-    private String convertTimestampToLocalDateTime(Long timestamp) {
-        Timestamp ts = new Timestamp(timestamp);
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(ts.toInstant(), ZoneOffset.ofHours(0));
-        LocalDate localDate = LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth());
-        return localDate.toString();
     }
 }

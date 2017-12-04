@@ -48,8 +48,9 @@ public class TickerController {
         for(DbUpdater dbUpdater : list) {
             stringBuilder.delete(0, stringBuilder.length());
             stringBuilder.append(MAIN_GET_QUERY);
-            stringBuilder.append(dbUpdater.getCurrencyPair());
+            stringBuilder.append(dbUpdater.getCurrencyPair().substring(1));
             requestsList.add(stringBuilder.toString());
+            System.out.println(stringBuilder.toString());
         }
         return requestsList;
     }

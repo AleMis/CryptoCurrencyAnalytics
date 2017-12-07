@@ -1,6 +1,8 @@
 package crypto_analytics.client.bitfinex;
 
 import crypto_analytics.config.CoreConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @Component
 public class CandleDataClient {
+
+
 
     @Autowired
     private RestTemplate restTemplate;

@@ -52,12 +52,12 @@ public class RequestCreator {
         return getRequestsListForUpdate(TimeFrame.TIME_FRAME_1D.getTimeFrame());
     }
 
-    private  HashMap<String, List<String>> getRequestsListForDownload(String timeframe) {
+    private  HashMap<String, List<String>> getRequestsListForDownload(String timeFrame) {
         HashMap<String, List<String>> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         List<String> requestList;
         for(DbUpdater dbUpdater : dbUpdaterList) {
-            if(!dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeframe)) {
+            if(!dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeFrame)) {
                 requestList = getRequestListForDownload(dbUpdater);
                 LocalDateTime localDateTime = convertTimestampToLocalDateTime(dbUpdater.getEndTimestampForFirstDownload());
                 dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
@@ -71,15 +71,15 @@ public class RequestCreator {
         return requestMap;
     }
 
-    private HashMap<String, String> getRequestsListForUpdate(String timeframe) {
+    private HashMap<String, String> getRequestsListForUpdate(String timeFrame) {
         HashMap<String, String> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
-        String request = null;
+        String request;
         for(DbUpdater dbUpdater : dbUpdaterList)  {
             Long tmp = convertLocalDateTimeToLong(returnCurrentLocalDateTime(dbUpdater.getTimeFrame()));
-            if(dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeframe) && !dbUpdater.getUpdateTimestamp().equals(tmp)) {
+            if(dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeFrame) && !dbUpdater.getUpdateTimestamp().equals(tmp)) {
                 request = getRequestToUpdate(dbUpdater);
-                LocalDateTime localDateTime = returnCurrentLocalDateTime(timeframe);
+                LocalDateTime localDateTime = returnCurrentLocalDateTime(timeFrame);
                 Long timestamp = convertLocalDateTimeToLong(localDateTime);
                 dbUpdater.setUpdateDate(LocalDate.of(localDateTime.getYear(), localDateTime.getMonth(), localDateTime.getDayOfMonth()).toString());
                 String time = localDateTime.getHour() + ":" + localDateTime.getMinute();

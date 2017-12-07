@@ -1,13 +1,11 @@
 package crypto_analytics.repository;
 
 
-import crypto_analytics.domain.candle.Candle;
-import crypto_analytics.domain.candle.CandleDto;
+import crypto_analytics.domain.bitfinex.candle.Candle;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 

@@ -6,12 +6,12 @@ import lombok.Getter;
 public enum TimestampDifference {
 
     //Time Stamps
-   DAILY_TIMESTAMP_DIFFERENCE("86400000"),
-   HOURLY_TIMESTAMP_DIFFERENCE("3600000");
+    DAILY_TIMESTAMP_DIFFERENCE("86400000"),
+    HOURLY_TIMESTAMP_DIFFERENCE("3600000");
 
-   private final String timestampDifference;
+    private final String timestampDifference;
 
-   TimestampDifference(String timestampDifference) {
+    TimestampDifference(String timestampDifference) {
         this.timestampDifference = timestampDifference;
     }
 

@@ -52,11 +52,7 @@ public class RequestCreator {
         return getRequestsListForUpdate(TimeFrame.TIME_FRAME_1D.getTimeFrame());
     }
 
-<<<<<<< HEAD:src/main/java/crypto_analytics/request/bitfinex/RequestCreator.java
     private  HashMap<String, List<String>> getRequestsListForDownload(String timeFrame) {
-=======
-    private  HashMap<String, List<String>> getRequestsListForDownload(String timeframe) {
->>>>>>> e39cef0... Code refactoring: changes in packages, class and methods names, simplifying few methods and class:src/main/java/crypto_analytics/request/bitfinex/RequestCreator.java
         HashMap<String, List<String>> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         List<String> requestList;
@@ -75,11 +71,7 @@ public class RequestCreator {
         return requestMap;
     }
 
-<<<<<<< HEAD:src/main/java/crypto_analytics/request/bitfinex/RequestCreator.java
     private HashMap<String, String> getRequestsListForUpdate(String timeFrame) {
-=======
-    private HashMap<String, String> getRequestsListForUpdate(String timeframe) {
->>>>>>> e39cef0... Code refactoring: changes in packages, class and methods names, simplifying few methods and class:src/main/java/crypto_analytics/request/bitfinex/RequestCreator.java
         HashMap<String, String> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         String request;

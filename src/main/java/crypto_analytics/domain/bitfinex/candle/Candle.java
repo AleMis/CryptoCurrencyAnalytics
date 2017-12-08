@@ -8,12 +8,12 @@ import javax.persistence.*;
 
 @NamedNativeQueries({
         @NamedNativeQuery(
-            name = "Candle.getLastDateForCurrency",
-            query =  "SELECT MAX(time_stamp) FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME"
+                name = "Candle.getLastDateForCurrency",
+                query =  "SELECT MAX(time_stamp) FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME"
         ),
         @NamedNativeQuery(
-            name = "Candle.checkFirstDate",
-            query = "SELECT time_stamp, currency_pair, time_frame FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME AND time_stamp = :TIME_STAMP"
+                name = "Candle.checkFirstDate",
+                query = "SELECT time_stamp, currency_pair, time_frame FROM candles WHERE currency_pair = :CURRENCY_PAIR AND time_frame = :TIME_FRAME AND time_stamp = :TIME_STAMP"
         ),
         @NamedNativeQuery(
                 name = "Candle. getCandlesByCurrencyPairAndTimeFrame",

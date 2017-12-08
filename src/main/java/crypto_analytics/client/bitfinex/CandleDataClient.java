@@ -4,8 +4,17 @@ import crypto_analytics.config.CoreConfiguration;
 <<<<<<< HEAD:src/main/java/crypto_analytics/client/bitfinex/CandleDataClient.java
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 =======
->>>>>>> e39cef0... Code refactoring: changes in packages, class and methods names, simplifying few methods and class:src/main/java/crypto_analytics/client/bitfinex/CandleDataClient.java
+>>>>>>> e39cef0... Code refactoring: changes in packages,import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+class and methods names, simplifying few methods and class:src/main/java/crypto_analytics/client/bitfinex/CandleDataClient.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

@@ -13,6 +13,8 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
 
 group = 'crypto_analytics'
 version = '0.0.1-SNAPSHOT'
@@ -30,8 +32,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-validation')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-web-services')
-
-	runtime('mysql:mysql-connector-java')
+	compile('mysql:mysql-connector-java')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.projectlombok:lombok:1.16.18')
+	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }

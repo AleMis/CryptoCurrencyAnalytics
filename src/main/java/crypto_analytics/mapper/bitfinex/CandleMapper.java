@@ -52,6 +52,7 @@ public class CandleMapper {
             Double volume = Double.valueOf(object[i][5].toString());
             CandleDto candleDto = new CandleDto(timeStamp, currencyPair, open, close, high, low, volume);
             candleDtoList.add(candleDto);
+            System.out.println(candleDto);
         }
         return candleDtoList;
     }

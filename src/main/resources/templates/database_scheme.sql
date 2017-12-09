@@ -20,11 +20,5 @@ insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_f
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tZECUSD', '1D', false, 1477785600000, 1510704000000, null, null, null);
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tZECUSD', '1h', false, 1508284800000, 1510704000000, null, null, null);
 
-insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tDASHUSD', '1D', false, 1492128000000, 1510704000000, null, null, null);
-insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tDASHUSD', '1h', false, 1508284800000, 1510704000000, null, null, null);
-
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tXMRUSD', '1D', false, 1480550400000, 1510704000000, null, null, null);
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tXMRUSD', '1h', false, 1508284800000, 1510704000000, null, null, null);
-
-insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tIOTAUSD', '1D', false, 1497312000000, 1510704000000, null, null, null);
-insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tIOTAUSD', '1h', false, 1508284800000, 1510704000000, null, null, null);

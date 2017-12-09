@@ -25,7 +25,7 @@ public class TickerClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Bean
+//    @Bean
     private List<TickerDto> getTickerSet() throws InterruptedException {
         List<TickerDto> tickerDtoList = new ArrayList<>();
         List<String> requestsList = getRequestsList();

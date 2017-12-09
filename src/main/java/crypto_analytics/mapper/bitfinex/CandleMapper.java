@@ -1,5 +1,6 @@
 package crypto_analytics.mapper.bitfinex;
 
+import crypto_analytics.domain.bitfinex.KeyParameters;
 import crypto_analytics.domain.bitfinex.candle.Candle;
 import crypto_analytics.domain.bitfinex.candle.CandleDto;
 import crypto_analytics.domain.bitfinex.candle.CandleChartDto;
@@ -17,18 +18,18 @@ import java.util.stream.Collectors;
 @Component
 public class CandleMapper {
 
-    public List<CandleDto> mapToCandleDtoListForDownload(HashMap<String, List<Object[][]>> twoDimObjectsMap) {
+    public List<CandleDto> mapToCandleDtoListForDownload(HashMap<KeyParameters, List<Object[][]>> twoDimObjectsMap) {
         List<CandleDto> candleDtoList = new ArrayList<>();
-        for(Map.Entry<String, List<Object[][]>> map : twoDimObjectsMap.entrySet()) {
-            candleDtoList = getCandleDtoListFromJsonList(map.getKey(), map.getValue());
+        for(Map.Entry<KeyParameters, List<Object[][]>> map : twoDimObjectsMap.entrySet()) {
+            candleDtoList = getCandleDtoListFromJsonList(map.getKey().getCurrencyPair(), map.getValue());
         }
         return candleDtoList;
     }
 
-    public List<CandleDto> mapToCandleDtoListForUpdate(HashMap<String, Object[][]> twoDimObjectsMap) {
+    public List<CandleDto> mapToCandleDtoListForUpdate(HashMap<KeyParameters, Object[][]> twoDimObjectsMap) {
         List<CandleDto> candleDtoList = new ArrayList<>();
-        for(Map.Entry<String, Object[][]> map : twoDimObjectsMap.entrySet()) {
-            candleDtoList = getCandleDtoListFromJson(map.getKey(), map.getValue());
+        for(Map.Entry<KeyParameters, Object[][]> map : twoDimObjectsMap.entrySet()) {
+            candleDtoList = getCandleDtoListFromJson(map.getKey().getCurrencyPair(), map.getValue());
         }
         return candleDtoList;
     }

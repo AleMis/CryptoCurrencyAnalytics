@@ -10,7 +10,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-public class KeyParameters {
+public class CandleKeyParameters {
 
     private String currencyPair;
     private String timeFrame;

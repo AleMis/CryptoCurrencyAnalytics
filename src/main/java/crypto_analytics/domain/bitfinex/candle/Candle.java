@@ -4,8 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-
-
 @NamedNativeQueries({
         @NamedNativeQuery(
                 name = "Candle.getLastDateForCurrency",

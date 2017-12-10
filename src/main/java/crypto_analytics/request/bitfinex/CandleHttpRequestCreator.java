@@ -1,7 +1,7 @@
 package crypto_analytics.request.bitfinex;
 
 import crypto_analytics.domain.bitfinex.DateManager;
-import crypto_analytics.domain.bitfinex.KeyParameters;
+import crypto_analytics.domain.bitfinex.CandleKeyParameters;
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
 import crypto_analytics.service.bitfinex.DbService;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @Getter
-public class RequestCreator {
+public class CandleHttpRequestCreator {
 
     @Value("${bitfinex.ticker.request.get}")
     private String tickerGetRequest;
@@ -37,30 +37,30 @@ public class RequestCreator {
     @Autowired
     private DbService service;
 
-    public HashMap<KeyParameters, List<String>> getHourlyRequestsListForDownload() {
+    public HashMap<CandleKeyParameters, List<String>> getHourlyRequestsListForDownload() {
         return getRequestsListForDownload(TimeFrame.TIME_FRAME_1H.getTimeFrame());
     }
 
-    public HashMap<KeyParameters, String> getHourlyRequestsListForUpdate() {
+    public HashMap<CandleKeyParameters, String> getHourlyRequestsListForUpdate() {
         return getRequestsListForUpdate(TimeFrame.TIME_FRAME_1H.getTimeFrame());
     }
 
-    public HashMap<KeyParameters, List<String>> getDailyRequestsListForDownload() {
+    public HashMap<CandleKeyParameters, List<String>> getDailyRequestsListForDownload() {
         return getRequestsListForDownload(TimeFrame.TIME_FRAME_1D.getTimeFrame());
     }
 
-    public HashMap<KeyParameters, String> getDailyRequestsListForUpdate(){
+    public HashMap<CandleKeyParameters, String> getDailyRequestsListForUpdate(){
         return getRequestsListForUpdate(TimeFrame.TIME_FRAME_1D.getTimeFrame());
     }
 
-    private  HashMap<KeyParameters, List<String>> getRequestsListForDownload(String timeFrame) {
-        HashMap<KeyParameters, List<String>> requestMap = new HashMap<>();
+    private  HashMap<CandleKeyParameters, List<String>> getRequestsListForDownload(String timeFrame) {
+        HashMap<CandleKeyParameters, List<String>> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         List<String> requestList;
         for(DbUpdater dbUpdater : dbUpdaterList) {
             if(!dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeFrame)) {
                 requestList = getRequestListToDownload(dbUpdater);
-                KeyParameters keyParameters = new KeyParameters(dbUpdater.getCurrencyPair(), dbUpdater.getTimeFrame());
+                CandleKeyParameters keyParameters = new CandleKeyParameters(dbUpdater.getCurrencyPair(), dbUpdater.getTimeFrame());
                 requestMap.put(keyParameters, requestList);
             }
         }
@@ -68,15 +68,15 @@ public class RequestCreator {
     }
 
 
-    private HashMap<KeyParameters, String> getRequestsListForUpdate(String timeFrame) {
-        HashMap<KeyParameters, String> requestMap = new HashMap<>();
+    private HashMap<CandleKeyParameters, String> getRequestsListForUpdate(String timeFrame) {
+        HashMap<CandleKeyParameters, String> requestMap = new HashMap<>();
         List<DbUpdater> dbUpdaterList = getUpdateList();
         String request;
         for(DbUpdater dbUpdater : dbUpdaterList)  {
             Long tmp = dateManager.convertLocalDateTimeToLong(dateManager.returnCurrentLocalDateTime(dbUpdater.getTimeFrame()));
             if(dbUpdater.getIsDownload() && dbUpdater.getTimeFrame().equals(timeFrame) && !dbUpdater.getUpdateTimestamp().equals(tmp)) {
                 request = getRequestToUpdate(dbUpdater);
-                KeyParameters keyParameters = new KeyParameters(dbUpdater.getCurrencyPair(), dbUpdater.getTimeFrame());
+                CandleKeyParameters keyParameters = new CandleKeyParameters(dbUpdater.getCurrencyPair(), dbUpdater.getTimeFrame());
                 requestMap.put(keyParameters, request);
             }
         }

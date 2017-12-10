@@ -1,14 +1,16 @@
 package crypto_analytics.repository;
-
-
 import crypto_analytics.domain.bitfinex.candle.Candle;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
+@Repository
 public interface CandleRepository extends CrudRepository<Candle, Long>{
 
     @Override

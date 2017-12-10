@@ -2,6 +2,9 @@ CREATE TABLE candles(id INT NOT NULL AUTO_INCREMENT, currency_pair VARCHAR(10), 
 
 CREATE TABLE db_updater(id INT NOT NULL AUTO_INCREMENT, currency_pair VARCHAR(10), time_frame VARCHAR(10), is_download BOOLEAN, start_timestamp_for_first_download BIGINT, end_timestamp_for_first_download BIGINT, date_of_last_update VARCHAR(20), time_of_last_update VARCHAR(20), timestamp_of_last_update BIGINT, PRIMARY KEY (id));
 
+CREATE TABLE books(id INT NOT NULL AUTO_INCREMENT, currency_pair VARCHAR(10), price DECIMAL(12,6), count DECIMAL(12,6), amount DECIMAL(12,6), PRIMARY KEY (id));
+
+
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tBTCUSD', '1D', false, 1364860800000, 1512777600000, null, null, null);
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tBTCUSD', '1h', false, 1508284800000, 1512777600000, null, null, null);
 

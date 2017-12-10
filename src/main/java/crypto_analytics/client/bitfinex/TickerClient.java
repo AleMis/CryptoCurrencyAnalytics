@@ -2,11 +2,9 @@ package crypto_analytics.client.bitfinex;
 
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
 import crypto_analytics.domain.bitfinex.ticker.TickerDto;
-import crypto_analytics.request.bitfinex.RequestCreator;
+import crypto_analytics.request.bitfinex.CandleHttpRequestCreator;
 import crypto_analytics.service.bitfinex.DbService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -17,7 +15,7 @@ import java.util.List;
 public class TickerClient {
 
     @Autowired
-    private RequestCreator requestCreator;
+    private CandleHttpRequestCreator requestCreator;
 
     @Autowired
     private DbService service;

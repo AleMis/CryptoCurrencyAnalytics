@@ -20,26 +20,31 @@ public class CandleClient {
     private RequestCreator requestCreator;
 
     @EventListener(ApplicationReadyEvent.class)
-    private void downloadDailyCandles() throws InterruptedException {
-        HashMap<KeyParameters, List<String>> requestMap = requestCreator.getDailyRequestsListForDownload();
-        candleDataClient.downloadData(requestMap);
+    private void downloadHistoricalData() {
+        downloadDailyCandles();
+        downloadHourlyCandles();
     }
 
-    @EventListener(ApplicationReadyEvent.class)
-    private void downloadHourlyCandles() throws InterruptedException {
+    private void downloadDailyCandles() {
+        HashMap<KeyParameters, List<String>> requestMap = requestCreator.getDailyRequestsListForDownload();
+        candleDataClient.downloadAndSaveHistoricalData(requestMap);
+        downloadHourlyCandles();
+    }
+
+    private void downloadHourlyCandles() {
         HashMap<KeyParameters, List<String>> requestMap = requestCreator.getHourlyRequestsListForDownload();
-        candleDataClient.downloadData(requestMap);
+        candleDataClient.downloadAndSaveHistoricalData(requestMap);
     }
 
     @Scheduled(cron="0 0 0 * * *")
     private void updateDailyCandles() throws InterruptedException {
         HashMap<KeyParameters, String> requestsList = requestCreator.getDailyRequestsListForUpdate();
-        candleDataClient.updateData(requestsList);
+        candleDataClient.updateAndSaveData(requestsList);
     }
 
     @Scheduled(cron="0 0 * * * *")
     private void updateHourlyCandles() throws InterruptedException {
         HashMap<KeyParameters, String> requestsList = requestCreator.getHourlyRequestsListForUpdate();
-        candleDataClient.updateData(requestsList);
+        candleDataClient.updateAndSaveData(requestsList);
     }
 }

@@ -8,13 +8,13 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 
 @SpringBootApplication
-public class CryptoCurrencyAnalyticsToolApplication extends SpringBootServletInitializer {
-//public class CryptoCurrencyAnalyticsToolApplication {
+//public class CryptoCurrencyAnalyticsToolApplication extends SpringBootServletInitializer {
+public class CryptoCurrencyAnalyticsToolApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CryptoCurrencyAnalyticsToolApplication.class, args);
 	}
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return builder.sources(CryptoCurrencyAnalyticsToolApplication.class);
-	}
+//	@Override
+//	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+//		return builder.sources(CryptoCurrencyAnalyticsToolApplication.class);
+//	}
 }

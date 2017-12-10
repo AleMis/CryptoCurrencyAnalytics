@@ -7,7 +7,6 @@ import crypto_analytics.domain.bitfinex.candle.CandleDto;
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
 import crypto_analytics.mapper.bitfinex.CandleMapper;
 import crypto_analytics.repository.DbUpdaterRepository;
-import crypto_analytics.request.bitfinex.TimeFrame;
 import crypto_analytics.service.bitfinex.DbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,59 +42,62 @@ public class CandleDataClient {
     @Autowired
     private DbService service;
 
-    public void downloadData(HashMap<KeyParameters, List<String>> requestMap) {
+    public void downloadAndSaveHistoricalData(HashMap<KeyParameters, List<String>> requestMap) {
         LOGGER.info("Start of downloading historical data for candle chart.");
-
-        String[][] requestTwoDArray;
-        List<Object[][]> requestTwoDList = new ArrayList<>();
-        HashMap<KeyParameters, List<Object[][]>> requestTwoDArrayMap = new HashMap<>();
         for (Map.Entry<KeyParameters, List<String>> requests : requestMap.entrySet()) {
-            for (String request : requests.getValue()) {
-                System.out.println(request);
-                System.out.println(requests.getKey());
-                try {
-                    ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(request, String[][].class);
-                    requestTwoDArray = responseEntity.getBody();
-                    requestTwoDList.add(requestTwoDArray);
-                    requestTwoDArrayMap.put(requests.getKey(), requestTwoDList);
-
-                    if(responseEntity.getBody().length != 0) {
-                        saveStatusOfDownload(requests.getKey().getCurrencyPair(), requests.getKey().getTimeFrame());
-                        saveCandleList(candleMapper.mapToCandleDtoListForDownload(requestTwoDArrayMap), requests.getKey().getTimeFrame());
-                        requestTwoDList.clear();
-                        requestTwoDArrayMap.clear();
-                        LOGGER.info("Historical data (" + requests.getKey().getCurrencyPair() + " : " + requests.getKey().getTimeFrame() + ") for candle chart has been downloaded and saved.");
-                        Thread.sleep(6000);
-                    }
-                }catch(Exception e) {
-                    LOGGER.error(e.getMessage() + " Data: " + requests.getKey().getCurrencyPair() + " : " + requests.getKey().getTimeFrame() +" was not downloaded." );
-                }
+            for (String httpRequest : requests.getValue()) {
+                dowanloadData(requests.getKey(), httpRequest);
             }
         }
     }
 
-    public void updateData(HashMap<KeyParameters, String> requestMap) throws InterruptedException {
+    private void dowanloadData(KeyParameters parameters, String httpRequest) {
+        List<Object[][]> downloadedJsonDataList = new ArrayList<>();
+        HashMap<KeyParameters, List<Object[][]>> downloadedJsonDataWithKeyParameters = new HashMap<>();
+        LOGGER.info("Downloading data (" + parameters.getCurrencyPair() + " : " + parameters.getTimeFrame() +") with request: " + httpRequest);
+        try {
+            ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(httpRequest, String[][].class);
+            String[][] downloadedJsonData = responseEntity.getBody();
+            downloadedJsonDataList.add(downloadedJsonData);
+            downloadedJsonDataWithKeyParameters.put(parameters, downloadedJsonDataList);
+            if(responseEntity.getBody().length != 0) {
+                saveDataAndStatusAfterDownload(downloadedJsonDataWithKeyParameters, parameters);
+            }
+            Thread.sleep(6000);
+        }catch(Exception e) {
+            LOGGER.error(e.getMessage() + " Data: " + parameters.getCurrencyPair() + " : " + parameters.getTimeFrame() +" was not downloaded correctly." );
+        }
+    }
+
+    private void saveDataAndStatusAfterDownload(HashMap<KeyParameters, List<Object[][]>> downloadedJsonDataWithKeyParameters, KeyParameters parameters) {
+        saveStatusOfDownload(parameters.getCurrencyPair(), parameters.getTimeFrame());
+        saveCandleList(candleMapper.mapToCandleDtoListForDownload(downloadedJsonDataWithKeyParameters), parameters.getTimeFrame());
+        LOGGER.info("Historical data (" + parameters.getCurrencyPair() + " : " + parameters.getTimeFrame() + ") for candle chart has been downloaded and saved.");
+    }
+
+    public void updateAndSaveData(HashMap<KeyParameters, String> requestMap) throws InterruptedException {
         LOGGER.info("Start of updating data for candle chart.");
-
-        String[][] requestTwoDArray;
-        HashMap<KeyParameters, Object[][]> actualDataMap = new HashMap<>();
-
         for (Map.Entry<KeyParameters, String> requests : requestMap.entrySet()) {
             try {
-                System.out.println(requests.getKey().getCurrencyPair());
+                LOGGER.info("Updating data for: " + requests.getKey().getCurrencyPair(), requests.getKey().getTimeFrame() + ".");
+                HashMap<KeyParameters, Object[][]> downloadedJsonDataWithKeyParameters = new HashMap<>();
                 ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(requests.getValue(), String[][].class);
+                String[][] downloadedJsonData = responseEntity.getBody();
+                downloadedJsonDataWithKeyParameters.put(requests.getKey(), downloadedJsonData);
                 if (responseEntity.getBody().length != 0) {
-                    requestTwoDArray = responseEntity.getBody();
-                    actualDataMap.put(requests.getKey(), requestTwoDArray);
-                    saveCandleList(candleMapper.mapToCandleDtoListForUpdate(actualDataMap), requests.getKey().getTimeFrame());
-                    saveStatusOfUpdate(requests.getKey().getCurrencyPair(), requests.getKey().getTimeFrame());
-                    LOGGER.info("Data (" + requests.getKey().getCurrencyPair() + " : " + requests.getKey().getTimeFrame() + ") for candle chart has been updated!");
-                    Thread.sleep(6000);
+                    saveDataAndStatusAfterUpdate(downloadedJsonDataWithKeyParameters, requests.getKey());
                 }
+                Thread.sleep(6000);
             }catch(Exception e){
                 LOGGER.error("Data was not updated! " + e.getMessage());
             }
         }
+    }
+
+    private void saveDataAndStatusAfterUpdate(HashMap<KeyParameters, Object[][]> downloadedJsonDataWithKeyParameters, KeyParameters parameters) {
+        saveCandleList(candleMapper.mapToCandleDtoListForUpdate(downloadedJsonDataWithKeyParameters), parameters.getTimeFrame());
+        saveStatusOfUpdate(parameters.getCurrencyPair(), parameters.getTimeFrame());
+        LOGGER.info("Data (" + parameters.getCurrencyPair() + " : " + parameters.getTimeFrame() + ") for candle chart has been updated!");
     }
 
     private void saveStatusOfDownload(String currencyPair, String timeFrame) {

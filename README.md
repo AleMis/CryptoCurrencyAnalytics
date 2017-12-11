@@ -9,7 +9,11 @@ Technology:
  - Java
  - Spring
  - Hibernate
- - AmCharts Librabry
  - MySQL (other database will be considered if necessary)
- - HTML, CSS, JavaScript
  - future deployment using Heroku or AWS (to consideration)
+ 
+ Front-end (https://github.com/AleMis/AleMis.Crypto_front-end.github.io )
+ - AmCharts Librabry
+ - HTML, CSS, JavaScript
+ 
+

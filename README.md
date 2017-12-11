@@ -1,7 +1,7 @@
 # CryptoCurrencyAnalytics
 
 CryptoCurrency Analytics is web service application based on REST architecture. 
-The conception of the application is to combine market data from different cryptocurrency exchanges to provide users opportunity to analyze and manage their investments. 
+The conception of the application is to combine market data from different cryptocurrency exchanges to provide users opportunity to analyze cryptocurrency market and to manage their portfolio remotely.  
 
 Currently, application is under integration with Bitfinex.com and new functionalities are constantly added (primary there is aim to provide users actual market data and opportunity to folow their portfolio status remotely). 
 

@@ -1,10 +1,8 @@
 package crypto_analytics.mapper.bitfinex;
 
-import crypto_analytics.domain.bitfinex.books.Books;
-import crypto_analytics.domain.bitfinex.books.BooksDto;
-import crypto_analytics.domain.bitfinex.candle.CandleDto;
-import org.springframework.stereotype.Component;
 
+import crypto_analytics.domain.bitfinex.books.*;
+import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,11 +47,49 @@ public class BooksMapper {
         return booksDtoList;
     }
 
-    public BooksDto[] mapBooksListToBooksDtoArray(List<Books> booksList) {
-        return booksList.stream().map(books -> new BooksDto(
-                books.getPrice(),
-                books.getCount(),
-                books.getAmount()
-        )).collect(Collectors.toList()).toArray(new BooksDto[booksList.size()]);
+    public MarketValues mapBooksListToBooksChartDto(List<Books> booksList) {
+       String[][] asksMarketValues = getAsksMarketValues(booksList);
+       String[][] bidsMarketValues = getBidsMarketValues(booksList);
+        return  new MarketValues(asksMarketValues, bidsMarketValues);
+    }
+
+    private String[][] getAsksMarketValues(List<Books> booksList) {
+        int marketValuesArraySize = getOfferQuantity(booksList);
+        String[][] asksMarketValues = new String[marketValuesArraySize][2];
+        int count = 0;
+        for (Books books : booksList) {
+            if (books.getAmount() < 0) {
+                asksMarketValues[count][0] = books.getPrice().toString();
+                Double amount = -books.getAmount();
+                asksMarketValues[count][1] = amount.toString();
+                count++;
+            }
+        }
+        return asksMarketValues;
+    }
+
+    private String[][] getBidsMarketValues(List<Books> booksList) {
+        int marketValuesArraySize = getOfferQuantity(booksList);
+        String[][] bidsMarketValues = new String[marketValuesArraySize][2];
+        int count = 0;
+        for (Books books : booksList) {
+            if (books.getAmount() > 0) {
+                bidsMarketValues[count][0] = books.getPrice().toString();
+                bidsMarketValues[count][1] = books.getAmount().toString();
+                count++;
+            }
+        }
+        return bidsMarketValues;
+    }
+
+
+    private int getOfferQuantity(List<Books> booksList) {
+       int quantity = 0;
+       for(Books books : booksList) {
+           if(books.getAmount() > 0) {
+               quantity++;
+           }
+       }
+       return quantity;
     }
 }

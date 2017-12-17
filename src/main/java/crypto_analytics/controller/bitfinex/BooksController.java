@@ -1,7 +1,6 @@
 package crypto_analytics.controller.bitfinex;
 
-import crypto_analytics.domain.bitfinex.books.Books;
-import crypto_analytics.domain.bitfinex.books.BooksDto;
+import crypto_analytics.domain.bitfinex.books.*;
 import crypto_analytics.mapper.bitfinex.BooksMapper;
 import crypto_analytics.service.bitfinex.DbService;
 import org.slf4j.Logger;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("v1/crypto")
@@ -25,8 +26,8 @@ public class BooksController {
     private BooksMapper booksMapper;
 
     @RequestMapping(method=RequestMethod.GET, value="getBooks")
-    public BooksDto[] getBooksList(@RequestParam String currencyPair) {
+    public MarketValues getBooksList2(@RequestParam String currencyPair) {
         LOGGER.info("Get books for " + currencyPair);
-        return booksMapper.mapBooksListToBooksDtoArray(service.getBooksByCurrencyPair(currencyPair));
+        return booksMapper.mapBooksListToBooksChartDto(service.getBooksByCurrencyPair(currencyPair));
     }
 }

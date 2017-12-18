@@ -21,6 +21,9 @@ public class CandleHttpRequestCreator {
     @Value("${bitfinex.ticker.request.get}")
     private String tickerGetRequest;
 
+    @Value("${bitfinex.tickers.request.get}")
+    private String tickersGetRequest;
+
     @Value("${bitfinex.candle.request.get}")
     private String candleMainGetRequest;
 
@@ -66,7 +69,6 @@ public class CandleHttpRequestCreator {
         }
         return requestMap;
     }
-
 
     private HashMap<CandleKeyParameters, String> getRequestsListForUpdate(String timeFrame) {
         HashMap<CandleKeyParameters, String> requestMap = new HashMap<>();

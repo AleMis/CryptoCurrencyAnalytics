@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,7 +35,7 @@ public class BooksClient {
     @Autowired
     private BooksMapper booksMapper;
 
-    @Scheduled(cron= "*/15 * * * * *")
+//    @Scheduled(cron= "*/15 * * * * *")
     private void downloadBooksData() throws InterruptedException {
         LOGGER.info("Start of downloading order books data.");
         HashMap<String, String> httpRequestMap = createHttpRequest();

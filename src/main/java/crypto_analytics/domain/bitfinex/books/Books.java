@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.data.jpa.repository.Modifying;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 
 @NamedNativeQuery(
@@ -23,6 +24,7 @@ import javax.persistence.*;
 public class Books {
 
     @Id
+    @NotNull
     @GeneratedValue
     @Column(name="id")
     private Long id;

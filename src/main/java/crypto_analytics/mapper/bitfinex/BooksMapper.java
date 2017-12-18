@@ -82,7 +82,6 @@ public class BooksMapper {
         return bidsMarketValues;
     }
 
-
     private int getOfferQuantity(List<Books> booksList) {
        int quantity = 0;
        for(Books books : booksList) {

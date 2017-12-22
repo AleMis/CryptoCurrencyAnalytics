@@ -58,7 +58,4 @@ public class TickersControllerTestSuite {
                 .andExpect(jsonPath("$[0].bid", is(15000.00)))
                 .andExpect(jsonPath("$[0].bidSize", is(50.00)));
     }
-
-
-
 }

@@ -32,10 +32,10 @@ public class TickersClient {
     @Autowired
     private TickersMapper tickersMapper;
 
-    @Scheduled(cron= "*/30 * * * * *")
+//    @Scheduled(cron= "*/30 * * * * *")
     private void downloadTickersData() throws InterruptedException {
         String request = getRequest();
-        LOGGER.info("Start of downloading tickers data [request: " + request);
+        LOGGER.info("Start of downloading tickers data [request: " + request + "]");
         ResponseEntity<String[][]> responseEntity = restTemplate.getForEntity(request, String[][].class);
         String[][] tickersData = responseEntity.getBody();
         if(tickersData != null) {

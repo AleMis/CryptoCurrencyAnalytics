@@ -24,7 +24,6 @@ import javax.validation.constraints.NotNull;
 public class Books {
 
     @Id
-    @NotNull
     @GeneratedValue
     @Column(name="id")
     private Long id;

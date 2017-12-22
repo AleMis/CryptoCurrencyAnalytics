@@ -25,7 +25,7 @@ public class BooksController {
     private BooksMapper booksMapper;
 
     @RequestMapping(method=RequestMethod.GET, value="getBooks")
-    public MarketValues getBooksList2(@RequestParam String currencyPair) {
+    public MarketValues getBooksData(@RequestParam String currencyPair) {
         LOGGER.info("Get books for " + currencyPair);
         return booksMapper.mapBooksListToBooksChartDto(service.getBooksByCurrencyPair(currencyPair));
     }

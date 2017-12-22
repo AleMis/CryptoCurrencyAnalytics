@@ -1,7 +1,6 @@
 package crypto_analytics.domain.bitfinex.tickers;
 
 
-import crypto_analytics.domain.bitfinex.ticker.Ticker;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

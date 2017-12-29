@@ -1,13 +1,11 @@
 package crypto_analytics.service.bitfinex;
 
+import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
 import crypto_analytics.domain.bitfinex.books.Books;
 import crypto_analytics.domain.bitfinex.candle.Candle;
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
 import crypto_analytics.domain.bitfinex.tickers.Tickers;
-import crypto_analytics.repository.BooksRepository;
-import crypto_analytics.repository.CandleRepository;
-import crypto_analytics.repository.DbUpdaterRepository;
-import crypto_analytics.repository.TickersRepository;
+import crypto_analytics.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -27,6 +25,9 @@ public class DbService {
 
     @Autowired
     private TickersRepository tickersRepository;
+
+    @Autowired
+    private ApiKeyRepository apiKeyRepository;
 
     public Candle saveCandle(final Candle candle) {
         return candleRepository.save(candle);
@@ -71,4 +72,6 @@ public class DbService {
     public List<Tickers> getAllTickers() {
         return tickersRepository.findAll();
     }
+
+    public ApiKeys getApiKeysById(Long id) {return apiKeyRepository.findAllById(id);}
 }

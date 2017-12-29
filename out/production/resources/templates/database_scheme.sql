@@ -6,6 +6,8 @@ CREATE TABLE books(id INT NOT NULL AUTO_INCREMENT, currency_pair VARCHAR(10), pr
 
 CREATE TABLE tickers(id INT NOT NULL AUTO_INCREMENT, currency_pair VARCHAR(10), bid DECIMAL(14,6), bid_size DECIMAL(14,6), ask DECIMAL(14,6), ask_size DECIMAL(14,6), daily_change DECIMAL(14,6), daily_change_perc DECIMAL(14,6), last_price DECIMAL(14,6), volume DECIMAL(14,6), high DECIMAL(14,6), low DECIMAL(14,6), PRIMARY KEY (id));
 
+create table api_keys(id int not null auto_increment, api_key varchar(255), api_secret_key varchar(255), primary key (id));
+
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tBTCUSD', '1D', false, 1364860800000, 1512777600000, null, null, null);
 insert into db_updater(currency_pair, time_frame, is_download, start_timestamp_for_first_download, end_timestamp_for_first_download, date_of_last_update, time_of_last_update, timestamp_of_last_update) values('tBTCUSD', '1h', false, 1508284800000, 1512777600000, null, null, null);
 

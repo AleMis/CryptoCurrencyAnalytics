@@ -1,4 +1,4 @@
-package crypto_analytics.controller;
+package crypto_analytics.controller.bitfinex;
 
 import crypto_analytics.controller.bitfinex.TickersController;
 import crypto_analytics.domain.bitfinex.tickers.Tickers;

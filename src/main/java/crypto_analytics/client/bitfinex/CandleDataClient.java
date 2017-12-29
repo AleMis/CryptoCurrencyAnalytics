@@ -1,7 +1,7 @@
 package crypto_analytics.client.bitfinex;
 
 import crypto_analytics.domain.bitfinex.DateManager;
-import crypto_analytics.domain.bitfinex.CandleKeyParameters;
+import crypto_analytics.domain.bitfinex.candle.CandleKeyParameters;
 import crypto_analytics.domain.bitfinex.candle.Candle;
 import crypto_analytics.domain.bitfinex.candle.CandleDto;
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;

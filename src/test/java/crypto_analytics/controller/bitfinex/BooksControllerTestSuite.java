@@ -1,11 +1,10 @@
-package crypto_analytics.controller;
+package crypto_analytics.controller.bitfinex;
 
 
 import crypto_analytics.controller.bitfinex.BooksController;
 import crypto_analytics.domain.bitfinex.books.Books;
 import crypto_analytics.domain.bitfinex.books.MarketValues;
 import crypto_analytics.mapper.bitfinex.BooksMapper;
-import crypto_analytics.mapper.bitfinex.CandleMapper;
 import crypto_analytics.service.bitfinex.DbService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +20,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,7 +58,7 @@ public class BooksControllerTestSuite {
         MarketValues marketValues = new MarketValues(asks, bids);
 
         when(service.getBooksByCurrencyPair(currencyPair)).thenReturn(booksList);
-        when(booksMapper.mapBooksListToBooksChartDto(booksList)).thenReturn(marketValues);
+        when(booksMapper.mapBooksListToMarketValues(booksList)).thenReturn(marketValues);
 
         //When & Then
         mockMvc.perform(get("/v1/crypto/getBooks")

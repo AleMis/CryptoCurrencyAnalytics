@@ -1,4 +1,4 @@
-package crypto_analytics.controller;
+package crypto_analytics.controller.bitfinex;
 
 
 import static org.mockito.Mockito.when;

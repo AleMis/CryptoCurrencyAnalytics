@@ -1,6 +1,6 @@
 package crypto_analytics.mapper.bitfinex;
 
-import crypto_analytics.domain.bitfinex.CandleKeyParameters;
+import crypto_analytics.domain.bitfinex.candle.CandleKeyParameters;
 import crypto_analytics.domain.bitfinex.candle.Candle;
 import crypto_analytics.domain.bitfinex.candle.CandleDto;
 import crypto_analytics.domain.bitfinex.candle.CandleChartDto;
@@ -33,7 +33,7 @@ public class CandleMapper {
         }
         return candleDtoList;
     }
-    public List<CandleDto> getCandleDtoListFromJsonList(String currencyPair, List<Object[][]> objectsList) {
+    private List<CandleDto> getCandleDtoListFromJsonList(String currencyPair, List<Object[][]> objectsList) {
         List<CandleDto> candleDtoList = new ArrayList<>();
         for (Object[][] object : objectsList) {
             candleDtoList.addAll(getCandleDtoListFromJson(currencyPair, object));
@@ -41,7 +41,7 @@ public class CandleMapper {
         return candleDtoList;
     }
 
-    public List<CandleDto> getCandleDtoListFromJson(String currencyPair, Object[][] object) {
+    private List<CandleDto> getCandleDtoListFromJson(String currencyPair, Object[][] object) {
         List<CandleDto> candleDtoList = new ArrayList<>();
         for (int i = 0; i < object.length; i++) {
             Long timeStamp = Long.valueOf(object[i][0].toString());

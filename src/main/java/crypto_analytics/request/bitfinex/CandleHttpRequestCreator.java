@@ -1,7 +1,7 @@
 package crypto_analytics.request.bitfinex;
 
 import crypto_analytics.domain.bitfinex.DateManager;
-import crypto_analytics.domain.bitfinex.CandleKeyParameters;
+import crypto_analytics.domain.bitfinex.candle.CandleKeyParameters;
 import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
 import crypto_analytics.service.bitfinex.DbService;
 import lombok.Getter;

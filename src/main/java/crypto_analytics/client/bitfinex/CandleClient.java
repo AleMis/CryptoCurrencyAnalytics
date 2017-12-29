@@ -1,6 +1,6 @@
 package crypto_analytics.client.bitfinex;
 
-import crypto_analytics.domain.bitfinex.CandleKeyParameters;
+import crypto_analytics.domain.bitfinex.candle.CandleKeyParameters;
 import crypto_analytics.request.bitfinex.CandleHttpRequestCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -20,7 +20,7 @@ public class CandleClient {
     @Autowired
     private CandleHttpRequestCreator requestCreator;
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     private void downloadHistoricalData() {
         downloadDailyCandles();
         downloadHourlyCandles();

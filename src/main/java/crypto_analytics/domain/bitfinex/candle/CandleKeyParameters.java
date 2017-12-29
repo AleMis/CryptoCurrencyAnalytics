@@ -1,4 +1,4 @@
-package crypto_analytics.domain.bitfinex;
+package crypto_analytics.domain.bitfinex.candle;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

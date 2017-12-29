@@ -1,4 +1,4 @@
-package crypto_analytics.mapper;
+package crypto_analytics.mapper.bitfinex;
 
 
 import crypto_analytics.domain.bitfinex.tickers.Tickers;

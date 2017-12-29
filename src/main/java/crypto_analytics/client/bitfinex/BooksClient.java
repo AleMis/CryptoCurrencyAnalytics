@@ -36,7 +36,7 @@ public class BooksClient {
     @Autowired
     private BooksMapper booksMapper;
 
-    @Scheduled(cron= "*/15 * * * * *")
+//    @Scheduled(cron= "*/15 * * * * *")
     private void downloadBooksData() throws InterruptedException {
         LOGGER.info("Start of downloading order books data.");
         HashMap<String, String> httpRequestMap = createHttpRequest();

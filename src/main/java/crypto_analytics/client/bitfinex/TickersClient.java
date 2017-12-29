@@ -5,6 +5,7 @@ import crypto_analytics.domain.bitfinex.tickers.Tickers;
 import crypto_analytics.mapper.bitfinex.TickersMapper;
 import crypto_analytics.request.bitfinex.CandleHttpRequestCreator;
 import crypto_analytics.service.bitfinex.DbService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Component
 public class TickersClient {
 

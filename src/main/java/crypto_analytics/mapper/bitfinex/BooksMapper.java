@@ -47,7 +47,7 @@ public class BooksMapper {
         return booksDtoList;
     }
 
-    public MarketValues mapBooksListToBooksChartDto(List<Books> booksList) {
+    public MarketValues mapBooksListToMarketValues(List<Books> booksList) {
        String[][] asksMarketValues = getAsksMarketValues(booksList);
        String[][] bidsMarketValues = getBidsMarketValues(booksList);
         return  new MarketValues(asksMarketValues, bidsMarketValues);

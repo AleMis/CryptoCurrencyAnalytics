@@ -1,11 +1,11 @@
 package crypto_analytics.authentication;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeysDto;
 import crypto_analytics.mapper.bitfinex.ApiKeysMapper;
 import crypto_analytics.service.bitfinex.DbService;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @NoArgsConstructor
-@Getter
 @Component
 public class ExchangeAuthentication {
 
@@ -30,18 +29,12 @@ public class ExchangeAuthentication {
     private String bitfinexMainUrl;
 
     @Value("${algorithm.hmac}")
-    private String alhorithmHMACSHA384;
-
-    private static final String UNEXPECTED_IO_ERROR_MSG = "Failed to connect to Exchange due to unexpected IO error.";
-    private static final String IO_SOCKET_TIMEOUT_ERROR_MSG = "Failed to connect to Exchange due to socket timeout.";
-    private static final String CONNECTION_ERROR = "Failed to connect to Exchange. Something dead!";
-    private static final String SSL_CONNECTION_REFUSED = "Failed to connect to Exchange. SSL Connection was refused or reset by the server.";
-    private static final String IO_5XX_TIMEOUT_ERROR_MSG = "Failed to connect to Exchange due to 5xx timeout.";
-    private static final String AUTHENTICATED_ACCESS_NOT_POSSIBLE = "Authenticated access not possible, because key and secret was not initialized: use right constructor.";
+    private String algorithmHMACSHA384;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeAuthentication.class);
 
     private long nonce = System.currentTimeMillis();
+    private int connectionTimeout;
 
     private Gson gson = new Gson();
     private Mac mac;
@@ -54,15 +47,15 @@ public class ExchangeAuthentication {
     @Autowired
     private ApiKeysMapper apiKeysMapper;
 
-    //Actually, api operates on 1 api keys for 1 user.
-    //Further development of the application will involved
-    // creation of the functionalities for many users.
+    //Actually, api operates on 1 api key for 1 user.
+    //Further development of the application will create
+    // necessity for developing of functionalities for many users.
     private ApiKeysDto getUserApiKeys() {
         ApiKeys apiKeys = dbService.getApiKeysById(1L);
         return apiKeysMapper.mapApiKeysToApiKeysDto(apiKeys);
     }
 
-    public String sendExchangeRequest(String urlPath, String httpMethod)  throws IOException {
+    public ExchangeHttpResponse sendExchangeRequest(String urlParh, String httpMethod)  throws IOException {
         ApiKeysDto apiKeysDto = getUserApiKeys();
         String errorMSG= "";
         HttpURLConnection conn = null;
@@ -70,33 +63,48 @@ public class ExchangeAuthentication {
         final StringBuilder exchangeResponse = new StringBuilder();
 
         try {
-            URL url = new URL(bitfinexMainUrl + urlPath);
+            URL url = new URL(bitfinexMainUrl +urlParh);
+
+            LOGGER.debug("Using following URL for API call: " + url);
+
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(httpMethod);
             conn.setDoOutput(true);
             conn.setDoInput(true);
 
             if (isAccessPublicOnly()) {
-                LOGGER.error(AUTHENTICATED_ACCESS_NOT_POSSIBLE);
-                return AUTHENTICATED_ACCESS_NOT_POSSIBLE;
+                LOGGER.error(ExchangeConnectionExceptions.AUTHENTICATED_ACCESS_NOT_POSSIBLE.getException());
             }
 
             if (params == null) {
                 params = createRequestParamMap();
             }
 
-            params.put("request", urlPath);
+            params.put("request", urlParh);
             params.put("nonce", Long.toString(getNonce()));
 
             String payload = gson.toJson(params);
-            String payload_base64 = Base64.getEncoder().encodeToString(payload.getBytes());
-            String payload_sha384hmac = hmacDigest(payload_base64, apiKeysDto.getApiSecretKey(), alhorithmHMACSHA384);
+            String payloadBase64 = Base64.getEncoder().encodeToString(payload.getBytes("UTF-8"));
+            String payloadSha384hmac = hmacDigest(payloadBase64, apiKeysDto.getApiSecretKey(), algorithmHMACSHA384);
 
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Accept", "application/json");
             conn.addRequestProperty("X-BFX-APIKEY", apiKeysDto.getApiKey());
-            conn.addRequestProperty("X-BFX-PAYLOAD", payload_base64);
-            conn.addRequestProperty("X-BFX-SIGNATURE", payload_sha384hmac);
+            conn.addRequestProperty("X-BFX-PAYLOAD", payloadBase64);
+            conn.addRequestProperty("X-BFX-SIGNATURE", payloadSha384hmac);
+
+            final int timeoutInMillis = connectionTimeout * 1000;
+            conn.setConnectTimeout(timeoutInMillis);
+            conn.setReadTimeout(timeoutInMillis);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            int n = 0;
+            while((n = conn.getInputStream().read(buf)) >= 0) {
+                baos.write(buf, 0, n);
+            }
+            byte[] content = baos.toByteArray();
+
 
             final BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
@@ -105,24 +113,26 @@ public class ExchangeAuthentication {
                 exchangeResponse.append(responseLine);
             }
 
+            System.out.println(exchangeResponse);
+            System.out.println("conn to String " + conn.toString());
             responseInputStream.close();
 
-            return exchangeResponse.toString();
+            return new ExchangeHttpResponse(conn.getResponseCode(), conn.getResponseMessage(), content);
 
         }catch(MalformedURLException e) {
-            LOGGER.error(UNEXPECTED_IO_ERROR_MSG, e);
+            LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
         }catch(SocketTimeoutException e) {
-            LOGGER.error(IO_SOCKET_TIMEOUT_ERROR_MSG, e);
+            LOGGER.error(ExchangeConnectionExceptions.IO_SOCKET_TIMEOUT_ERROR_MSG.getException(), e);
         }catch(FileNotFoundException | UnknownHostException e) {
-            LOGGER.error(CONNECTION_ERROR, e);
+            LOGGER.error(ExchangeConnectionExceptions.CONNECTION_ERROR.getException(), e);
         }catch(IOException e) {
             try{
                 if(e.getMessage() != null) {
-                    LOGGER.error(SSL_CONNECTION_REFUSED, e);
+                    LOGGER.error(ExchangeConnectionExceptions.SSL_CONNECTION_REFUSED.getException(), e);
                 }else if (conn != null) {
-                    LOGGER.error(IO_5XX_TIMEOUT_ERROR_MSG, e);
+                    LOGGER.error(ExchangeConnectionExceptions.IO_5XX_TIMEOUT_ERROR_MSG.getException(), e);
                 }else {
-                    LOGGER.error(UNEXPECTED_IO_ERROR_MSG, e);
+                    LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
 
                 if(conn != null) {
                     final InputStream rawErrorStream = conn.getErrorStream();
@@ -135,13 +145,13 @@ public class ExchangeAuthentication {
                             errorResponse.append(errorLine);
                         }
                         errorInputStream.close();
-                        errorMSG = UNEXPECTED_IO_ERROR_MSG + " ErrorStream Response: " + errorResponse;
+                        errorMSG = ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException() + " ErrorStream Response: " + errorResponse;
                     }
                 }
                 LOGGER.error(errorMSG, e);
                 }
             }catch (IOException io) {
-                LOGGER.error(UNEXPECTED_IO_ERROR_MSG, e);
+                LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
             }
 
         }finally {
@@ -149,7 +159,7 @@ public class ExchangeAuthentication {
                 conn.disconnect();
             }
         }
-        return errorMSG;
+        return new ExchangeHttpResponse(0, null, null);
     }
 
     public long getNonce() {
@@ -179,11 +189,11 @@ public class ExchangeAuthentication {
             }
             digest = hash.toString();
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Exception: " + e.getMessage());
+            LOGGER.error(ExchangeConnectionExceptions.ENCODING_ERROR.getException(), e);
         } catch (InvalidKeyException e) {
-            LOGGER.error("Exception: " + e.getMessage());
+            LOGGER.error(ExchangeConnectionExceptions.INVALID_KEY_ERROR.getException(), e);
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("Exception: " + e.getMessage());
+            LOGGER.error(ExchangeConnectionExceptions.LACK_OF_ALGORITHM_ERROR.getException(), e);
         }
         return digest;
     }

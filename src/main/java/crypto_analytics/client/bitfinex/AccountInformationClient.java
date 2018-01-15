@@ -45,6 +45,11 @@ public class AccountInformationClient {
     private Gson gson = new Gson();
 
 
+    //Remember!!! When you don not have any cryptocurrencies on your account
+    // this method will return empty array. Server returns only information about
+    // cryptocurrencies which you have on your account!
+
+    @Bean
     public List<AccountBalanceDto> getBalanceHistory() throws Exception {
 
         try {

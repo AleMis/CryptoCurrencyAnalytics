@@ -34,7 +34,7 @@ public class AccountBalanceConverter {
     }
 
     private ArrayList<AccountBalanceDto> getAccountsBalances(JsonReader reader) throws IOException {
-        ArrayList<AccountBalanceDto> permisionsList = new ArrayList<>();
+        ArrayList<AccountBalanceDto> accountBalanceList = new ArrayList<>();
         reader.beginObject();
         while (reader.hasNext()) {
             String name = reader.nextName();
@@ -52,8 +52,9 @@ public class AccountBalanceConverter {
             }else if(name.equals("available")) {
                 available = new BigDecimal(reader.nextDouble());
             }
-            permisionsList.add(new AccountBalanceDto(type, currency, amount, available));
+            accountBalanceList.add(new AccountBalanceDto(type, currency, amount, available));
         }
-        return permisionsList;
+        accountBalanceList.stream().forEach(System.out::println);
+        return accountBalanceList;
     }
 }

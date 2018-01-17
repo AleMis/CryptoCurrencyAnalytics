@@ -55,7 +55,7 @@ public class ExchangeAuthentication {
         return apiKeysMapper.mapApiKeysToApiKeysDto(apiKeys);
     }
 
-    public ExchangeHttpResponse sendExchangeRequest(String urlParh, String httpMethod)  throws IOException {
+    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod)  throws IOException {
         ApiKeysDto apiKeysDto = getUserApiKeys();
         String errorMSG= "";
         HttpURLConnection conn = null;
@@ -63,7 +63,7 @@ public class ExchangeAuthentication {
         final StringBuilder exchangeResponse = new StringBuilder();
 
         try {
-            URL url = new URL(bitfinexMainUrl +urlParh);
+            URL url = new URL(bitfinexMainUrl + urlPath);
 
             LOGGER.debug("Using following URL for API call: " + url);
 
@@ -80,7 +80,7 @@ public class ExchangeAuthentication {
                 params = createRequestParamMap();
             }
 
-            params.put("request", urlParh);
+            params.put("request", urlPath);
             params.put("nonce", Long.toString(getNonce()));
 
             String payload = gson.toJson(params);
@@ -104,7 +104,6 @@ public class ExchangeAuthentication {
                 baos.write(buf, 0, n);
             }
             byte[] content = baos.toByteArray();
-
 
             final BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 

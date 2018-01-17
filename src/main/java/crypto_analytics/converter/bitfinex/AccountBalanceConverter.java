@@ -1,7 +1,8 @@
 package crypto_analytics.converter.bitfinex;
 
+import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonReader;
-import crypto_analytics.client.bitfinex.AccountInformationClient;
+import crypto_analytics.client.bitfinex.AccountPermissionsClient;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 @Component
 public class AccountBalanceConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountInformationClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountPermissionsClient.class);
 
     public ArrayList<AccountBalanceDto> readAccountsBalances(InputStream inputStream) throws Exception {
         JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));
@@ -35,26 +36,31 @@ public class AccountBalanceConverter {
 
     private ArrayList<AccountBalanceDto> getAccountsBalances(JsonReader reader) throws IOException {
         ArrayList<AccountBalanceDto> accountBalanceList = new ArrayList<>();
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String name = reader.nextName();
-            String type = "";
-            String currency = "";
-            BigDecimal amount = null;
-            BigDecimal available = null;
 
-            if (name.equals("type")) {
-                type = reader.nextString();
-            }else if(name.equals("currency")) {
-                currency = reader.nextString();
-            }else if(name.equals("amount")) {
-                amount = new BigDecimal(reader.nextDouble());
-            }else if(name.equals("available")) {
-                available = new BigDecimal(reader.nextDouble());
+        try {
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String name = reader.nextName();
+                String type = "";
+                String currency = "";
+                BigDecimal amount = null;
+                BigDecimal available = null;
+
+                if (name.equals("type")) {
+                    type = reader.nextString();
+                } else if (name.equals("currency")) {
+                    currency = reader.nextString();
+                } else if (name.equals("amount")) {
+                    amount = new BigDecimal(reader.nextDouble());
+                } else if (name.equals("available")) {
+                    available = new BigDecimal(reader.nextDouble());
+                }
+                accountBalanceList.add(new AccountBalanceDto(type, currency, amount, available));
             }
-            accountBalanceList.add(new AccountBalanceDto(type, currency, amount, available));
+            accountBalanceList.stream().forEach(System.out::println);
+        } catch (JsonIOException e) {
+            LOGGER.error("User has not any currencies on his account!");
         }
-        accountBalanceList.stream().forEach(System.out::println);
         return accountBalanceList;
     }
 }

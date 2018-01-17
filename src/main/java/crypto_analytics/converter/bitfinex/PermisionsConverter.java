@@ -1,7 +1,7 @@
 package crypto_analytics.converter.bitfinex;
 
 import com.google.gson.stream.JsonReader;
-import crypto_analytics.client.bitfinex.AccountInformationClient;
+import crypto_analytics.client.bitfinex.AccountPermissionsClient;
 import crypto_analytics.domain.bitfinex.permisions.PermisionsDto;
 import crypto_analytics.domain.bitfinex.permisions.PermisionsParametersDto;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @Component
 public class PermisionsConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountInformationClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountPermissionsClient.class);
 
     public ArrayList<PermisionsDto> readPermissionsList(InputStream inputStream) throws Exception {
         JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));

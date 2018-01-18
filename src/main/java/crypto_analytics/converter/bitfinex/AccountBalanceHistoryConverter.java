@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Component
 public class AccountBalanceHistoryConverter {
@@ -37,34 +38,29 @@ public class AccountBalanceHistoryConverter {
 
     private ArrayList<AccountBalanceHistoryDto> getAccountsBalances(JsonReader reader) throws IOException {
         ArrayList<AccountBalanceHistoryDto> accountBalanceHistoryList = new ArrayList<>();
-
         try {
             reader.beginObject();
             while (reader.hasNext()) {
-                String name = reader.nextName();
-                String currency = "";
-                BigDecimal amount = null;
-                BigDecimal balance = null;
-                String description = "";
-                Long timestamp = null;
-
-                if (name.equals("currency")) {
-                    currency = reader.nextString();
-                } else if (name.equals("amount")) {
-                    amount = new BigDecimal(reader.nextString());
-                } else if (name.equals("amount")) {
-                    balance = new BigDecimal(reader.nextString());
-                } else if (name.equals("available")) {
-                    description = reader.nextString();
-                }else if (name.equals("timestamp")) {
-                    timestamp = new Long(reader.nextString());
-                }
+                reader.nextName();
+                String currency = reader.nextString();
+                reader.nextName();
+                BigDecimal amount = new BigDecimal(reader.nextString());
+                reader.nextName();
+                BigDecimal balance = new BigDecimal(reader.nextString());
+                reader.nextName();
+                String description = reader.nextString();
+                reader.nextName();
+                Long timestamp = checkTimestamp(reader.nextString());
                 accountBalanceHistoryList.add(new AccountBalanceHistoryDto(currency, amount, balance, description, timestamp));
             }
-            accountBalanceHistoryList.stream().forEach(System.out::println);
         } catch (JsonIOException e) {
             LOGGER.error("Account balance history is empty");
         }
         return accountBalanceHistoryList;
+    }
+
+    private Long checkTimestamp(String timestamp) {
+        String[] checkedTimestamp = timestamp.split("\\.");
+        return new Long(checkedTimestamp[0]);
     }
 }

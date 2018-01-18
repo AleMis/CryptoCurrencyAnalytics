@@ -1,7 +1,7 @@
 package crypto_analytics.authentication;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceModerator;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeysDto;
 import crypto_analytics.mapper.bitfinex.ApiKeysMapper;
@@ -47,6 +47,9 @@ public class ExchangeAuthentication {
     @Autowired
     private ApiKeysMapper apiKeysMapper;
 
+    @Autowired
+    private RequestParamsModifier responseParamsModifier;
+
     //Actually, api operates on 1 api key for 1 user.
     //Further development of the application will create
     // necessity for developing of functionalities for many users.
@@ -55,7 +58,7 @@ public class ExchangeAuthentication {
         return apiKeysMapper.mapApiKeysToApiKeysDto(apiKeys);
     }
 
-    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod)  throws IOException {
+    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod, AccountBalanceModerator accountBalanceModerator)  throws IOException {
         ApiKeysDto apiKeysDto = getUserApiKeys();
         String errorMSG= "";
         HttpURLConnection conn = null;
@@ -77,11 +80,12 @@ public class ExchangeAuthentication {
             }
 
             if (params == null) {
-                params = createRequestParamMap();
+                params = responseParamsModifier.modifyRequestParamMap(accountBalanceModerator);
             }
 
             params.put("request", urlPath);
             params.put("nonce", Long.toString(getNonce()));
+
 
             String payload = gson.toJson(params);
             String payloadBase64 = Base64.getEncoder().encodeToString(payload.getBytes("UTF-8"));
@@ -195,10 +199,6 @@ public class ExchangeAuthentication {
             LOGGER.error(ExchangeConnectionExceptions.LACK_OF_ALGORITHM_ERROR.getException(), e);
         }
         return digest;
-    }
-
-    private Map<String, Object> createRequestParamMap() {
-        return new HashMap<>();
     }
 }
 

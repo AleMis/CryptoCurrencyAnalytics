@@ -4,6 +4,8 @@ import crypto_analytics.authentication.ExchangeAuthentication;
 import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.PermisionsConverter;
+import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceModerator;
+import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceSearcher;
 import crypto_analytics.domain.bitfinex.permisions.PermisionsDto;
 
 import org.slf4j.LoggerFactory;
@@ -31,10 +33,15 @@ public class AccountPermissionsClient {
 
     private static final String POST = "POST";
 
+    private static final String WITHOUT_PARAM = "without param";
+
     public ArrayList<PermisionsDto> getPermisionsList() throws Exception {
 
+        AccountBalanceSearcher accountBalanceSearcher = null;
+        AccountBalanceModerator accountBalanceModerator = new AccountBalanceModerator(WITHOUT_PARAM, accountBalanceSearcher);
+
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(permisions, POST);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(permisions, POST, accountBalanceModerator);
 
             LOGGER.info("Information about permisions to different resources: " + exchangeHttpResponse);
 

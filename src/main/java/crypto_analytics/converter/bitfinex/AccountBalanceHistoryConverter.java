@@ -3,18 +3,15 @@ package crypto_analytics.converter.bitfinex;
 import com.google.gson.JsonIOException;
 import com.google.gson.stream.JsonReader;
 import crypto_analytics.client.bitfinex.AccountPermissionsClient;
-import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceDto;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceHistoryDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 @Component
 public class AccountBalanceHistoryConverter {

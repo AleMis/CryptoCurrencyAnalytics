@@ -4,8 +4,8 @@ import crypto_analytics.authentication.ExchangeAuthentication;
 import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.PermisionsConverter;
-import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceModerator;
-import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceSearcher;
+import crypto_analytics.domain.bitfinex.params.ParamsModerator;
+import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
 import crypto_analytics.domain.bitfinex.permisions.PermisionsDto;
 
 import org.slf4j.LoggerFactory;
@@ -37,8 +37,8 @@ public class AccountPermissionsClient {
 
     public ArrayList<PermisionsDto> getPermisionsList() throws Exception {
 
-        AccountBalanceSearcher accountBalanceSearcher = null;
-        AccountBalanceModerator accountBalanceModerator = new AccountBalanceModerator(WITHOUT_PARAM, accountBalanceSearcher);
+        ParamsToSearch accountBalanceSearcher = null;
+        ParamsModerator accountBalanceModerator = new ParamsModerator(WITHOUT_PARAM, accountBalanceSearcher);
 
         try {
             ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(permisions, POST, accountBalanceModerator);

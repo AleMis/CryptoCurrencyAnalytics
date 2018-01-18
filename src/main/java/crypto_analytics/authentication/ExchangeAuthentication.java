@@ -1,7 +1,7 @@
 package crypto_analytics.authentication;
 
 import com.google.gson.Gson;
-import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceModerator;
+import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
 import crypto_analytics.domain.bitfinex.apikey.ApiKeysDto;
 import crypto_analytics.mapper.bitfinex.ApiKeysMapper;
@@ -58,7 +58,7 @@ public class ExchangeAuthentication {
         return apiKeysMapper.mapApiKeysToApiKeysDto(apiKeys);
     }
 
-    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod, AccountBalanceModerator accountBalanceModerator)  throws IOException {
+    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod, ParamsModerator accountBalanceModerator)  throws IOException {
         ApiKeysDto apiKeysDto = getUserApiKeys();
         String errorMSG= "";
         HttpURLConnection conn = null;

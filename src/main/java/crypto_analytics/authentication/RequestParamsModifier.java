@@ -14,35 +14,64 @@ public class RequestParamsModifier {
     private static final String BALANCE_HISTORY_SINCE_WALLET ="BALANCE_HISTORY_SINCE_WALLET";
     private static final String BALANCE_HISTORY_SINCE_UNTIL_WALLET ="BALANCE_HISTORY_SINCE_UNTIL_WALLET";
     private static final String PAST_TRADES = "PAST_TRADES";
+    private static final String NEW_ORDER = "NEW_ORDER";
 
 
-    public Map<String, Object> modifyRequestParamMap(ParamsModerator accountBalanceModerator) {
+    public Map<String, Object> modifyRequestParamMap(ParamsModerator paramsModerator) {
         HashMap<String, Object> createRequestParam = new HashMap<>();
-
-        if (accountBalanceModerator.getParamType().equals(BALANCE_HISTORY)) {
-            createRequestParam = createReqeustParamForBalanceHistory(accountBalanceModerator);
-        }else if(accountBalanceModerator.getParamType().equals(PAST_TRADES)) {
-            createRequestParam.put("symbol", accountBalanceModerator.getAccountBalanceSearcher().getCurrency());
-            createRequestParam.put("timestamp", accountBalanceModerator.getAccountBalanceSearcher().getSinceTimestamp().toString());
+        String paramsType = paramsModerator.getParamType();
+        switch(paramsType) {
+            case BALANCE_HISTORY:
+                createRequestParam = createReqeustParamForBalanceHistory(paramsModerator);
+                break;
+            case PAST_TRADES:
+                createRequestParam = createRequestParam(paramsModerator);
+                break;
+            case NEW_ORDER:
+                createRequestParam = createRequestParamsForNewOrder(paramsModerator);
+                break;
         }
+        return createRequestParam;
+    }
+
+    private HashMap<String, Object> createRequestParam(ParamsModerator paramsModerator) {
+        HashMap<String, Object> createRequestParam = new HashMap<>();
+        createRequestParam.put("symbol", paramsModerator.getParamsToSearch().getCurrency());
+        createRequestParam.put("timestamp", paramsModerator.getParamsToSearch().getSinceTimestamp().toString());
         return createRequestParam;
     }
 
     private HashMap<String, Object> createReqeustParamForBalanceHistory(ParamsModerator paramsModerator) {
         HashMap<String, Object> createRequestParam = new HashMap<>();
-        createRequestParam.put("currency", paramsModerator.getAccountBalanceSearcher().getCurrency());
-        createRequestParam.put("since", paramsModerator.getAccountBalanceSearcher().getSinceTimestamp().toString());
+        createRequestParam.put("currency", paramsModerator.getParamsToSearch().getCurrency());
+        createRequestParam.put("since", paramsModerator.getParamsToSearch().getSinceTimestamp().toString());
         switch(paramsModerator.getParamType()) {
             case BALANCE_HISTORY_SINCE:
                 return createRequestParam;
             case BALANCE_HISTORY_SINCE_WALLET:
-                createRequestParam.put("wallet", paramsModerator.getAccountBalanceSearcher().getWallet());
+                createRequestParam.put("wallet", paramsModerator.getParamsToSearch().getWallet());
                 return createRequestParam;
             case BALANCE_HISTORY_SINCE_UNTIL_WALLET:
-                createRequestParam.put("until", paramsModerator.getAccountBalanceSearcher().getUntilTimestamp().toString());
-                createRequestParam.put("wallet", paramsModerator.getAccountBalanceSearcher().getWallet());
+                createRequestParam.put("until", paramsModerator.getParamsToSearch().getUntilTimestamp().toString());
+                createRequestParam.put("wallet", paramsModerator.getParamsToSearch().getWallet());
                 return createRequestParam;
         }
         return createRequestParam;
+    }
+
+    private HashMap<String,Object> createRequestParamsForNewOrder(ParamsModerator paramsModerator) {
+        HashMap<String, Object> createRequestParam = new HashMap<>();
+        createRequestParam.put("symbol", paramsModerator.getOrderDto().getSymbol());
+        createRequestParam.put("amount", paramsModerator.getOrderDto().getAmount());
+        createRequestParam.put("price", paramsModerator.getOrderDto().getPrice());
+        createRequestParam.put("side", paramsModerator.getOrderDto().getSide());
+        createRequestParam.put("type", paramsModerator.getOrderDto().getType());
+        createRequestParam.put("exchange", paramsModerator.getOrderDto().getExchange());
+        createRequestParam.put("is_hidden", paramsModerator.getOrderDto().isHidden());
+        createRequestParam.put("is_postonly", paramsModerator.getOrderDto().isPostonly());
+        createRequestParam.put("ocoorder", paramsModerator.getOrderDto().isOcoOrder());
+        createRequestParam.put("buy_price_oco", paramsModerator.getOrderDto().getOcoStopOrder());
+        createRequestParam.put("sell_price_oco", paramsModerator.getOrderDto().getOcoStopOrder());
+        return  createRequestParam;
     }
 }

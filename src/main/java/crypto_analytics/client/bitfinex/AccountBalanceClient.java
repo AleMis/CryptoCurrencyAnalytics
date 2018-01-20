@@ -5,20 +5,19 @@ import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.AccountBalanceConverter;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceDto;
-import crypto_analytics.domain.bitfinex.params.Params;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-@Configuration
+@Component
 public class AccountBalanceClient {
 
     @Value("${bitfinex.accountbalance.current}")
@@ -34,9 +33,9 @@ public class AccountBalanceClient {
 
     private static final String POST = "POST";
 
-    public List<AccountBalanceDto> getAccountBalance() throws Exception {
+    public List<AccountBalanceDto> getAccountBalance(String params) throws Exception {
 
-        ParamsModerator paramsModerator = new ParamsModerator(Params.WITHOUT_PARAMS.getParams(), null);
+        ParamsModerator paramsModerator = new ParamsModerator(params, null);
 
         try {
             ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountBalance, POST, paramsModerator);
@@ -51,5 +50,4 @@ public class AccountBalanceClient {
             throw new IOException(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
         }
     }
-
 }

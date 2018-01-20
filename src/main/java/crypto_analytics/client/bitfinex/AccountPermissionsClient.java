@@ -5,20 +5,21 @@ import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.PermisionsConverter;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
-import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
 import crypto_analytics.domain.bitfinex.permisions.PermisionsDto;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @Component
 public class AccountPermissionsClient {
+
 
     @Value("${bitfinex.permisions.info}")
     private String permisions;
@@ -37,11 +38,10 @@ public class AccountPermissionsClient {
 
     public ArrayList<PermisionsDto> getPermisionsList() throws Exception {
 
-        ParamsToSearch accountBalanceSearcher = null;
-        ParamsModerator accountBalanceModerator = new ParamsModerator(WITHOUT_PARAM, accountBalanceSearcher);
+        ParamsModerator paramsModerator = new ParamsModerator(WITHOUT_PARAM, null);
 
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(permisions, POST, accountBalanceModerator);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(permisions, POST, paramsModerator);
 
             LOGGER.info("Information about permisions to different resources: " + exchangeHttpResponse);
 

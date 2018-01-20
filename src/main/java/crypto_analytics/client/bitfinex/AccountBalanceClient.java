@@ -5,6 +5,7 @@ import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.AccountBalanceConverter;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceDto;
+import crypto_analytics.domain.bitfinex.params.Params;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +34,12 @@ public class AccountBalanceClient {
 
     private static final String POST = "POST";
 
-    private static final String WITHOUT_PARAM = "without param";
-
     public List<AccountBalanceDto> getAccountBalance() throws Exception {
 
-        ParamsModerator accountBalanceModerator = new ParamsModerator(WITHOUT_PARAM, null);
+        ParamsModerator paramsModerator = new ParamsModerator(Params.WITHOUT_PARAMS.getParams(), null);
 
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountBalance, POST, accountBalanceModerator);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountBalance, POST, paramsModerator);
 
             LOGGER.info("Account balance information: " + exchangeHttpResponse);
 
@@ -52,4 +51,5 @@ public class AccountBalanceClient {
             throw new IOException(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
         }
     }
+
 }

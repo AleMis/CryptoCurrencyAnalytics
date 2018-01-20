@@ -5,6 +5,7 @@ import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.AccountBalanceHistoryConverter;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceHistoryDto;
+import crypto_analytics.domain.bitfinex.params.Params;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
 import org.slf4j.Logger;
@@ -35,16 +36,15 @@ public class AccountBalanceHistoryClient {
 
     private static final String POST = "POST";
 
-    private static final String BALANCE_HISTORY = "balance history";
-
+    @Bean
     public List<AccountBalanceHistoryDto> getAccountBalanceHistory() throws Exception {
 
         //only for tests
-        ParamsToSearch accountBalanceSearcher = new ParamsToSearch("LTC",1496707230L);
-        ParamsModerator accountBalanceModerator = new ParamsModerator(BALANCE_HISTORY, accountBalanceSearcher);
+        ParamsToSearch paramsToSearch = new ParamsToSearch("LTC",1496707230L);
+        ParamsModerator paramsModerator = new ParamsModerator(Params.BALANCE_HISTORY.getParams(), paramsToSearch);
 
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountHistory, POST, accountBalanceModerator);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountHistory, POST, paramsModerator);
 
             LOGGER.info("Account balance history information: " + exchangeHttpResponse);
 

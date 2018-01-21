@@ -17,6 +17,7 @@ public class NewOrderController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/order")
     public CreatedOrderDto createNewOrder(@RequestBody OrderDto orderDto) throws Exception {
+        System.out.println(orderDto);
         return orderFacade.createNewOrder(orderDto);
     }
 }

@@ -1,12 +1,8 @@
 package crypto_analytics.domain.bitfinex.order;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -14,11 +10,20 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class CreatedOrderDto {
 
     @JsonProperty("id")
-    private Long orderId;
+    private Long id;
+
+    @JsonProperty("cid")
+    private Long cid;
+
+    @JsonProperty("cid_date")
+    private String cid_date;
+
+    @JsonProperty("gid")
+    private String gid;
 
     @JsonProperty("symbol")
     private String symbol;
@@ -39,7 +44,7 @@ public class CreatedOrderDto {
     private String type;
 
     @JsonProperty("timestamp")
-    private Long timestamp;
+    private BigDecimal timestamp;
 
     @JsonProperty("is_live")
     private Boolean isLive;
@@ -49,6 +54,9 @@ public class CreatedOrderDto {
 
     @JsonProperty("is_hidden")
     private Boolean isHidden;
+
+    @JsonProperty("oco_order")
+    private String ocoOrder;
 
     @JsonProperty("was_forced")
     private Boolean wasForced;
@@ -61,5 +69,11 @@ public class CreatedOrderDto {
 
     @JsonProperty("executed_amount")
     private BigDecimal executedAmount;
+
+    @JsonProperty("src")
+    private String src;
+
+    @JsonProperty("order_id")
+    private Long orderId;
 
 }

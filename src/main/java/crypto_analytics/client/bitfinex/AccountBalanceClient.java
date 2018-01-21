@@ -6,6 +6,7 @@ import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.converter.bitfinex.AccountBalanceConverter;
 import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceDto;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
+import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class AccountBalanceClient {
 
     public List<AccountBalanceDto> getAccountBalance(String params) throws Exception {
 
-        ParamsModerator paramsModerator = new ParamsModerator(params, null);
+        ParamsToSearch paramsToSearch = null;
+        ParamsModerator paramsModerator = new ParamsModerator(params, paramsToSearch);
 
         try {
             ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountBalance, POST, paramsModerator);

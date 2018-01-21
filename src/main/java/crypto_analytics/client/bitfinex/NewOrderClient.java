@@ -45,9 +45,12 @@ public class NewOrderClient {
             InputStream inputStream = new ByteArrayInputStream(exchangeHttpResponse.getContent());
 
             return orderConverter.readCreatedOrder(inputStream);
-        } catch (Exception e) {
+        } catch (IOException e) {
             LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
             throw new IOException(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
+        } catch (NullPointerException e) {
+            LOGGER.error(ExchangeConnectionExceptions.RETURN_NULL_AFTER_PLACING_ORDER.getException(), e);
+            throw new IOException(ExchangeConnectionExceptions.RETURN_NULL_AFTER_PLACING_ORDER.getException(), e);
         }
     }
 }

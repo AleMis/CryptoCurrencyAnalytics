@@ -3,6 +3,8 @@ package crypto_analytics.authentication;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,18 +62,35 @@ public class RequestParamsModifier {
     }
 
     private HashMap<String,Object> createRequestParamsForNewOrder(ParamsModerator paramsModerator) {
+        System.out.println(paramsModerator.getOrderDto());
         HashMap<String, Object> createRequestParam = new HashMap<>();
-        createRequestParam.put("symbol", paramsModerator.getOrderDto().getSymbol());
-        createRequestParam.put("amount", paramsModerator.getOrderDto().getAmount());
-        createRequestParam.put("price", paramsModerator.getOrderDto().getPrice());
-        createRequestParam.put("side", paramsModerator.getOrderDto().getSide());
-        createRequestParam.put("type", paramsModerator.getOrderDto().getType());
-        createRequestParam.put("exchange", paramsModerator.getOrderDto().getExchange());
-        createRequestParam.put("is_hidden", paramsModerator.getOrderDto().isHidden());
-        createRequestParam.put("is_postonly", paramsModerator.getOrderDto().isPostonly());
-        createRequestParam.put("ocoorder", paramsModerator.getOrderDto().isOcoOrder());
-        createRequestParam.put("buy_price_oco", paramsModerator.getOrderDto().getOcoStopOrder());
-        createRequestParam.put("sell_price_oco", paramsModerator.getOrderDto().getOcoStopOrder());
+        createRequestParam.put("symbol", paramsModerator.getOrderDto().getSymbol().toLowerCase());
+        createRequestParam.put("amount", checkAmount(paramsModerator.getOrderDto().getAmount()));
+        createRequestParam.put("price", checkPrice(paramsModerator.getOrderDto().getPrice()));
+        createRequestParam.put("side",  paramsModerator.getOrderDto().getSide().toLowerCase());
+        createRequestParam.put("type", paramsModerator.getOrderDto().getType().toLowerCase());
+        createRequestParam.put("exchange", paramsModerator.getOrderDto().getExchange().toLowerCase());
+//        createRequestParam.put("ocoorder", String.valueOf(paramsModerator.getOrderDto().isOcoOrder()));
+//
+//        if(paramsModerator.getOrderDto().isOcoOrder()) {
+//            if(paramsModerator.getOrderDto().getSide().toLowerCase().equals("buy")) {
+//                createRequestParam.put("buy_price_oco", paramsModerator.getOrderDto().getOcoStopOrder().toString());
+//            }else if (paramsModerator.getOrderDto().getSide().toLowerCase().equals("sell")) {
+//                createRequestParam.put("sell_price_oco", paramsModerator.getOrderDto().getOcoStopOrder().toString() );
+//            }
+//        }
+        createRequestParam.entrySet().stream().forEach(System.out::println);
         return  createRequestParam;
+    }
+
+    private String checkPrice(BigDecimal price) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.########");
+        return decimalFormat.format(price);
+
+    }
+
+    private String checkAmount(BigDecimal amount) {
+        DecimalFormat decimalFormat = new DecimalFormat("#.########");
+        return decimalFormat.format(amount);
     }
 }

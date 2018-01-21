@@ -14,7 +14,8 @@ public enum ExchangeConnectionExceptions {
     AUTHENTICATED_ACCESS_NOT_POSSIBLE("Authenticated access not possible, because key and secret was not initialized: use right constructor."),
     ENCODING_ERROR("Failed to encode secret key. The Character Encoding is not supported."),
     INVALID_KEY_ERROR("Something wrong with keys - invalid encoding, wrod length etc."),
-    LACK_OF_ALGORITHM_ERROR("HmaxSHA384 not available in the environment");
+    LACK_OF_ALGORITHM_ERROR("HmaxSHA384 not available in the environment"),
+    RETURN_NULL_AFTER_PLACING_ORDER("Something wrong with the process of placing the new order.");
 
 
     private String exception;

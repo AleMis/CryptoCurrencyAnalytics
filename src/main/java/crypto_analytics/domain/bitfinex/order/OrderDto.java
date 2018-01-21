@@ -19,9 +19,7 @@ public class OrderDto {
     private String side;
     private String type;
     private String exchange;
-    private boolean isHidden;
-    private boolean isPostonly;
-    private boolean ocoOrder;
+    private boolean isOcoOrder;
     private BigDecimal ocoStopOrder;
 
 }

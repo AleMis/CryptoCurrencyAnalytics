@@ -9,14 +9,18 @@ import java.math.BigDecimal;
 @ToString
 public class PastTradesDto {
 
+    // Using underscore ("_") in variables name is necessary to read correctly response from exchange
+    // without creating completed objects converters.
+    // I'm breaking the naming convention rule as well as Java 9 assumptions.
+
     private BigDecimal price;
     private BigDecimal amount;
     private Long timestamp;
     private String exchange;
     private String type;
-    private String feeCurrency;
-    private BigDecimal feeAmount;
+    private String fee_currency;
+    private BigDecimal fee_amount;
     private Long tid;
-    private Long orderId;
+    private Long order_id;
 
 }

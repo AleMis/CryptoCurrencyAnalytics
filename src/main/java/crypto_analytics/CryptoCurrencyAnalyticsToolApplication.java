@@ -1,8 +1,6 @@
 package crypto_analytics;
 
 
-import crypto_analytics.authentication.ExchangeAuthentication;
-import crypto_analytics.authentication.ExchangeHttpResponse;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -7,7 +7,7 @@ import crypto_analytics.authentication.ExchangeHttpResponse;
 import crypto_analytics.domain.bitfinex.params.Params;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
-import crypto_analytics.domain.bitfinex.pasttrades.PastTradesListDto;
+import crypto_analytics.domain.bitfinex.positions.ActivePositionsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,37 +17,37 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class PastTradesClient {
+public class ActivePositionsClient {
 
-    @Value("${bitfinex.pasttrades}")
-    private String pastTrades;
+
+    @Value("${bitfinex.positions.active}")
+    private String activePositions;
 
     @Autowired
     private ExchangeAuthentication exchangeAuthentication;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PastTradesClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderStatusClient.class);
 
     private static final String POST = "POST";
 
-    public PastTradesListDto getPastTrades(String symbol, String timestamp) throws Exception {
+    public ActivePositionsDto[] getActivePositions() throws Exception {
 
-        //only for tests
-        ParamsToSearch paramsToSearch = new ParamsToSearch(symbol,Long.valueOf(timestamp));
-        ParamsModerator paramsModerator = new ParamsModerator(Params.PAST_TRADES.getParams(), paramsToSearch);
+        ParamsToSearch paramsToSearch = null;
+        ParamsModerator paramsModerator = new ParamsModerator(Params.WITHOUT_PARAMS.getParams(), paramsToSearch);
 
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(pastTrades, POST, paramsModerator);
-
-            LOGGER.info("Past trades information: " + exchangeHttpResponse);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(activePositions, POST, paramsModerator);
+            LOGGER.info("Active positions information: " + exchangeHttpResponse);
 
             Gson gson = new Gson();
-            PastTradesListDto pastTradesListDto =  gson.fromJson(exchangeHttpResponse.getContent(), PastTradesListDto.class);
 
-            return pastTradesListDto;
-        } catch (Exception e) {
+            return gson.fromJson(exchangeHttpResponse.getContent(), ActivePositionsDto[].class);
+        } catch (IOException e) {
             LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
             throw new IOException(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
+        } catch (NullPointerException e) {
+            LOGGER.error(ExchangeConnectionExceptions.ACTIVE_POSITIONS_ERROR.getException(), e);
+            throw new IOException(ExchangeConnectionExceptions.ACTIVE_POSITIONS_ERROR.getException(), e);
         }
     }
-
 }

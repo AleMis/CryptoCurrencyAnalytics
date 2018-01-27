@@ -39,8 +39,6 @@ public class ExchangeAuthentication {
     private Gson gson = new Gson();
     private Mac mac;
 
-    private Map<String, Object> params;
-
     @Autowired
     private DbService dbService;
 
@@ -58,70 +56,30 @@ public class ExchangeAuthentication {
         return apiKeysMapper.mapApiKeysToApiKeysDto(apiKeys);
     }
 
-    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod, ParamsModerator accountBalanceModerator)  throws IOException {
+    public ExchangeHttpResponse sendExchangeRequest(String urlPath, String httpMethod, ParamsModerator paramsModerator)  throws IOException {
         ApiKeysDto apiKeysDto = getUserApiKeys();
         String errorMSG= "";
-        HttpURLConnection conn = null;
-
-        final StringBuilder exchangeResponse = new StringBuilder();
+        HttpURLConnection connection = null;
 
         try {
             URL url = new URL(bitfinexMainUrl + urlPath);
-
             LOGGER.debug("Using following URL for API call: " + url);
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod(httpMethod);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
 
             if (isAccessPublicOnly()) {
                 LOGGER.error(ExchangeConnectionExceptions.AUTHENTICATED_ACCESS_NOT_POSSIBLE.getException());
             }
 
-            if (params == null) {
-                params = responseParamsModifier.modifyRequestParamMap(accountBalanceModerator);
-            }
-
-            params.put("request", urlPath);
-            params.put("nonce", Long.toString(getNonce()));
-
+            Map<String, Object> params = createFinalParams(paramsModerator, urlPath);
+            params.entrySet().forEach(System.out::println);
 
             String payload = gson.toJson(params);
-            String payloadBase64 = Base64.getEncoder().encodeToString(payload.getBytes("UTF-8"));
+            String payloadBase64 = createPayloadBase64(payload);
             String payloadSha384hmac = hmacDigest(payloadBase64, apiKeysDto.getApiSecretKey(), algorithmHMACSHA384);
 
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Accept", "application/json");
-            conn.addRequestProperty("X-BFX-APIKEY", apiKeysDto.getApiKey());
-            conn.addRequestProperty("X-BFX-PAYLOAD", payloadBase64);
-            conn.addRequestProperty("X-BFX-SIGNATURE", payloadSha384hmac);
+            connection = setHttpUrlConnParameters(url, httpMethod, apiKeysDto, payloadBase64, payloadSha384hmac);
+            String content = createContent(connection);
 
-            final int timeoutInMillis = connectionTimeout * 1000;
-            conn.setConnectTimeout(timeoutInMillis);
-            conn.setReadTimeout(timeoutInMillis);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            byte[] buf = new byte[1024];
-            int n = 0;
-            while((n = conn.getInputStream().read(buf)) >= 0) {
-                baos.write(buf, 0, n);
-            }
-            byte[] content = baos.toByteArray();
-
-            final BufferedReader responseInputStream = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-
-            String responseLine;
-            while ((responseLine = responseInputStream.readLine()) != null) {
-                exchangeResponse.append(responseLine);
-            }
-
-            System.out.println(exchangeResponse);
-            System.out.println("conn to String " + conn.toString());
-            responseInputStream.close();
-
-            return new ExchangeHttpResponse(conn.getResponseCode(), conn.getResponseMessage(), content);
-
+            return new ExchangeHttpResponse(connection.getResponseCode(), connection.getResponseMessage(),content);
         }catch(MalformedURLException e) {
             LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
         }catch(SocketTimeoutException e) {
@@ -132,13 +90,13 @@ public class ExchangeAuthentication {
             try{
                 if(e.getMessage() != null) {
                     LOGGER.error(ExchangeConnectionExceptions.SSL_CONNECTION_REFUSED.getException(), e);
-                }else if (conn != null) {
+                }else if (connection != null) {
                     LOGGER.error(ExchangeConnectionExceptions.IO_5XX_TIMEOUT_ERROR_MSG.getException(), e);
                 }else {
                     LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
 
-                if(conn != null) {
-                    final InputStream rawErrorStream = conn.getErrorStream();
+                if(connection != null) {
+                    final InputStream rawErrorStream = connection.getErrorStream();
 
                     if(rawErrorStream != null) {
                         final BufferedReader errorInputStream = new BufferedReader(new InputStreamReader(rawErrorStream, "UTF-8"));
@@ -156,24 +114,64 @@ public class ExchangeAuthentication {
             }catch (IOException io) {
                 LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
             }
-
         }finally {
-            if(conn != null) {
-                conn.disconnect();
+            if(connection != null) {
+                connection.disconnect();
             }
         }
         return new ExchangeHttpResponse(0, null, null);
     }
 
-    public long getNonce() {
+    private long getNonce() {
         return ++nonce;
     }
 
-    public boolean isAccessPublicOnly() {
+    private boolean isAccessPublicOnly() {
         return getUserApiKeys() == null;
     }
 
-    public String hmacDigest(String msg, String keyString, String algo) {
+    private String createPayloadBase64(String payload) throws UnsupportedEncodingException {
+        String payloadBase64 = Base64.getEncoder().encodeToString(payload.getBytes("UTF-8"));
+        return payloadBase64;
+    }
+
+    private String createContent(HttpURLConnection connection) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buf = new byte[1024];
+        int n = 0;
+        while((n = connection.getInputStream().read(buf)) >= 0) {
+            baos.write(buf, 0, n);
+        }
+        byte[] content = baos.toByteArray();
+        return new String(content);
+    }
+
+    private HttpURLConnection setHttpUrlConnParameters(URL url, String httpMethod, ApiKeysDto apiKeysDto, String payloadBase64, String payloadSha384hmac) throws IOException {
+        HttpURLConnection connection = null;
+        connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod(httpMethod);
+        connection.setDoOutput(true);
+        connection.setDoInput(true);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.addRequestProperty("X-BFX-APIKEY", apiKeysDto.getApiKey());
+        connection.addRequestProperty("X-BFX-PAYLOAD", payloadBase64);
+        connection.addRequestProperty("X-BFX-SIGNATURE", payloadSha384hmac);
+
+        final int timeoutInMillis = connectionTimeout * 1000;
+        connection.setConnectTimeout(timeoutInMillis);
+        connection.setReadTimeout(timeoutInMillis);
+        return connection;
+    }
+
+    private Map<String, Object> createFinalParams(ParamsModerator paramsModerator, String urlPath) {
+        Map<String, Object> params = responseParamsModifier.modifyRequestParamMap(paramsModerator);
+        params.put("request", urlPath);
+        params.put("nonce", Long.toString(getNonce()));
+        return params;
+    }
+
+    private String hmacDigest(String msg, String keyString, String algo) {
         String digest = null;
         try {
             SecretKeySpec key = new SecretKeySpec((keyString).getBytes("UTF-8"), algo);

@@ -11,7 +11,11 @@ public class ParamsToSearch {
     private Long sinceTimestamp;
     private Long untilTimestamp;
     private String wallet;
+    private String orderId;
 
+    public ParamsToSearch(String orderId) {
+        this.orderId = orderId;
+    }
 
     public ParamsToSearch(String currency, Long sinceTimestamp, Long untilTimestamp, String wallet) {
         this.currency = currency;

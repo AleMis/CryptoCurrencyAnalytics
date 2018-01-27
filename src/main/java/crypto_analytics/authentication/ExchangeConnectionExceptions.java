@@ -15,7 +15,10 @@ public enum ExchangeConnectionExceptions {
     ENCODING_ERROR("Failed to encode secret key. The Character Encoding is not supported."),
     INVALID_KEY_ERROR("Something wrong with keys - invalid encoding, wrod length etc."),
     LACK_OF_ALGORITHM_ERROR("HmaxSHA384 not available in the environment"),
-    RETURN_NULL_AFTER_PLACING_ORDER("Something wrong with the process of placing the new order.");
+    RETURN_NULL_AFTER_PLACING_ORDER("Something wrong with the process of placing the new order."),
+    CANCEL_ORDER_ERROR("Failed to cancel order. Something wrong with Order id"),
+    ORDER_STATUS_ERROR("Something wrong with downloading order status"),
+    ACTIVE_POSITIONS_ERROR("Something wrong with downloading of active positions information.");
 
 
     private String exception;

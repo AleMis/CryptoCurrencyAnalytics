@@ -12,5 +12,5 @@ public class ExchangeHttpResponse {
 
     private int statusCode;
     private String responseMessage;
-    private byte[] content;
+    private String content;
 }

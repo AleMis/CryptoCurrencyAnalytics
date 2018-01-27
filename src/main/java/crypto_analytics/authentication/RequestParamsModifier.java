@@ -17,6 +17,8 @@ public class RequestParamsModifier {
     private static final String BALANCE_HISTORY_SINCE_UNTIL_WALLET ="BALANCE_HISTORY_SINCE_UNTIL_WALLET";
     private static final String PAST_TRADES = "PAST_TRADES";
     private static final String NEW_ORDER = "NEW_ORDER";
+    private static final String ORDER_BY_ID = "ORDER_BY_ID";
+    private static final String CANCEL_ALL_ORDERS = "CANCEL_ALL_ORDERS";
 
 
     public Map<String, Object> modifyRequestParamMap(ParamsModerator paramsModerator) {
@@ -32,6 +34,11 @@ public class RequestParamsModifier {
             case NEW_ORDER:
                 createRequestParam = createRequestParamsForNewOrder(paramsModerator);
                 break;
+            case ORDER_BY_ID:
+                createRequestParam = setOrderIdAsParam(paramsModerator.getParamsToSearch().getOrderId());
+                break;
+            case CANCEL_ALL_ORDERS:
+                return createRequestParam;
         }
         return createRequestParam;
     }
@@ -92,5 +99,11 @@ public class RequestParamsModifier {
     private String checkAmount(BigDecimal amount) {
         DecimalFormat decimalFormat = new DecimalFormat("#.########");
         return decimalFormat.format(amount);
+    }
+
+    private HashMap<String,Object> setOrderIdAsParam(String orderId) {
+        HashMap<String, Object> createRequestParam = new HashMap<>();
+        createRequestParam.put("order_id", Long.parseLong(orderId));
+        return createRequestParam;
     }
 }

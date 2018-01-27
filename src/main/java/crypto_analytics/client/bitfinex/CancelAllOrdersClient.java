@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import crypto_analytics.authentication.ExchangeAuthentication;
 import crypto_analytics.authentication.ExchangeConnectionExceptions;
 import crypto_analytics.authentication.ExchangeHttpResponse;
-import crypto_analytics.domain.bitfinex.accountbalance.AccountBalanceListDto;
+import crypto_analytics.domain.bitfinex.order.CancelAllOrders;
+import crypto_analytics.domain.bitfinex.params.Params;
 import crypto_analytics.domain.bitfinex.params.ParamsModerator;
 import crypto_analytics.domain.bitfinex.params.ParamsToSearch;
 import org.slf4j.Logger;
@@ -16,34 +17,36 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class AccountBalanceClient {
+public class CancelAllOrdersClient {
 
-    @Value("${bitfinex.accountbalance.current}")
-    private String accountBalance;
+    @Value("${bitfinex.order.cancel.all}")
+    private String cancelAllOrder;
 
     @Autowired
     private ExchangeAuthentication exchangeAuthentication;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountBalanceClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CancelAllOrdersClient.class);
 
     private static final String POST = "POST";
 
-    public AccountBalanceListDto getAccountBalance(String params) throws Exception {
+    public CancelAllOrders cancelAllOrders() throws Exception {
 
         ParamsToSearch paramsToSearch = null;
-        ParamsModerator paramsModerator = new ParamsModerator(params, paramsToSearch);
+        ParamsModerator paramsModerator = new ParamsModerator(Params.WITHOUT_PARAMS.getParams(), paramsToSearch);
 
         try {
-            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(accountBalance, POST, paramsModerator);
-
-            LOGGER.info("Account balance information: " + exchangeHttpResponse);
+            ExchangeHttpResponse exchangeHttpResponse = exchangeAuthentication.sendExchangeRequest(cancelAllOrder, POST, paramsModerator);
+            LOGGER.info("Cancel all orders information: " + exchangeHttpResponse);
 
             Gson gson = new Gson();
 
-            return gson.fromJson(exchangeHttpResponse.getContent(), AccountBalanceListDto.class);
-        } catch (Exception e) {
+            return  gson.fromJson(exchangeHttpResponse.getContent(), CancelAllOrders.class);
+        } catch (IOException e) {
             LOGGER.error(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
             throw new IOException(ExchangeConnectionExceptions.UNEXPECTED_IO_ERROR_MSG.getException(), e);
+        } catch (NullPointerException e) {
+            LOGGER.error(ExchangeConnectionExceptions.CANCEL_ORDER_ERROR.getException(), e);
+            throw new IOException(ExchangeConnectionExceptions.CANCEL_ORDER_ERROR.getException(), e);
         }
     }
 }

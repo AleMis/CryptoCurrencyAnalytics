@@ -1,7 +1,6 @@
 package crypto_analytics.domain.bitfinex.order;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -13,67 +12,30 @@ import java.math.BigDecimal;
 @ToString
 public class CreatedOrderDto {
 
-    @JsonProperty("id")
+    // Using underscore ("_") in variables name is necessary to read correctly response from exchange
+    // without creating completed objects converters.
+    // I'm breaking the naming convention rule as well as Java 9 assumptions.
+
     private Long id;
-
-    @JsonProperty("cid")
     private Long cid;
-
-    @JsonProperty("cid_date")
     private String cid_date;
-
-    @JsonProperty("gid")
     private String gid;
-
-    @JsonProperty("symbol")
     private String symbol;
-
-    @JsonProperty("exchange")
     private String exchange;
-
-    @JsonProperty("price")
     private BigDecimal price;
-
-    @JsonProperty("avg_execution_price")
-    private BigDecimal avgExecutionPrice;
-
-    @JsonProperty("side")
+    private BigDecimal avg_execution_price;
     private String side;
-
-    @JsonProperty("type")
     private String type;
-
-    @JsonProperty("timestamp")
     private BigDecimal timestamp;
-
-    @JsonProperty("is_live")
-    private Boolean isLive;
-
-    @JsonProperty("is_cancelled")
-    private Boolean isCancelled;
-
-    @JsonProperty("is_hidden")
-    private Boolean isHidden;
-
-    @JsonProperty("oco_order")
-    private String ocoOrder;
-
-    @JsonProperty("was_forced")
-    private Boolean wasForced;
-
-    @JsonProperty("original_amount")
-    private BigDecimal originalAmount;
-
-    @JsonProperty("remaining_amount")
-    private BigDecimal remainingAmount;
-
-    @JsonProperty("executed_amount")
-    private BigDecimal executedAmount;
-
-    @JsonProperty("src")
+    private Boolean is_live;
+    private Boolean is_cancelled;
+    private Boolean is_hidden;
+    private String oco_order;
+    private Boolean was_forced;
+    private BigDecimal original_amount;
+    private BigDecimal remaining_amount;
+    private BigDecimal executed_amount;
     private String src;
-
-    @JsonProperty("order_id")
-    private Long orderId;
+    private Long order_id;
 
 }

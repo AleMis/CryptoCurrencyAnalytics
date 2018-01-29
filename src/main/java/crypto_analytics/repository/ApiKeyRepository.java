@@ -1,6 +1,6 @@
 package crypto_analytics.repository;
 
-import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
+import crypto_analytics.domain.apikey.ApiKeys;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

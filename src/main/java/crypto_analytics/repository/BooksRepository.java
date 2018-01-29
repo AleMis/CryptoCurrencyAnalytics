@@ -1,6 +1,6 @@
 package crypto_analytics.repository;
 
-import crypto_analytics.domain.bitfinex.books.Books;
+import crypto_analytics.domain.books.Books;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -1,6 +1,6 @@
 package crypto_analytics.repository;
 
-import crypto_analytics.domain.bitfinex.tickers.Tickers;
+import crypto_analytics.domain.tickers.Tickers;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

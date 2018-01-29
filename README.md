@@ -1,17 +1,20 @@
-# CryptoCurrencyAnalytics
+# CryptoCurrencyAnalytics #
 
-CryptoCurrency Analytics is web service application based on REST architecture. 
-The conception of the application is to combine market data from different cryptocurrency exchanges to provide users opportunity to analyze cryptocurrency market and to manage their portfolio remotely.  
+CryptoCurrencyAnalytics is web service application based on REST architecture. 
 
-Currently, application is under integration with Bitfinex.com and new functionalities are constantly added (primary there is aim to provide users actual market data and opportunity to folow their portfolio status remotely). 
+The conception of the application is to gather market data from Bitfinex exchange as well as to give users opportunity to manage their accounts remotely.
 
-Technology:
+User has ability: to place orders; to cancel orders; to check current account balance as well as history; to check past trades; to check active orders and positions, their status as well as orders history.   
+
+Further development of this project is continued as "cryptos" project (link: https://github.com/alemis/cryptos).
+
+### Build With ###
  - Java
  - Spring
  - Hibernate
- - MySQL (other database will be considered if necessary)
- - future deployment using Heroku or AWS (to consideration)
- 
+ - MySQL 
+ - Gradle 
+  
  Front-end (https://github.com/AleMis/AleMis.Crypto_front-end.github.io )
- - AmCharts Librabry
+ - AmCharts Library
  - HTML, CSS, JavaScript

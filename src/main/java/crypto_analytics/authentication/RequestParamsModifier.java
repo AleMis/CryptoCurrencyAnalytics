@@ -1,6 +1,6 @@
 package crypto_analytics.authentication;
 
-import crypto_analytics.domain.bitfinex.params.ParamsModerator;
+import crypto_analytics.domain.params.ParamsModerator;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

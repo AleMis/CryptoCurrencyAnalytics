@@ -1,11 +1,11 @@
 package crypto_analytics.authentication;
 
 import com.google.gson.Gson;
-import crypto_analytics.domain.bitfinex.params.ParamsModerator;
-import crypto_analytics.domain.bitfinex.apikey.ApiKeys;
-import crypto_analytics.domain.bitfinex.apikey.ApiKeysDto;
-import crypto_analytics.mapper.bitfinex.ApiKeysMapper;
-import crypto_analytics.service.bitfinex.DbService;
+import crypto_analytics.domain.params.ParamsModerator;
+import crypto_analytics.domain.apikey.ApiKeys;
+import crypto_analytics.domain.apikey.ApiKeysDto;
+import crypto_analytics.mapper.ApiKeysMapper;
+import crypto_analytics.service.DbService;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

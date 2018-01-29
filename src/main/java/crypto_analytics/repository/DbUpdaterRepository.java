@@ -1,6 +1,6 @@
 package crypto_analytics.repository;
 
-import crypto_analytics.domain.bitfinex.dbupdater.DbUpdater;
+import crypto_analytics.domain.dbupdater.DbUpdater;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
